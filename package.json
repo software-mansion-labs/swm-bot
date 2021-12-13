@@ -6,8 +6,14 @@
   "repository": "https://github.com/software-mansion-labs/swm-github-bot.git",
   "author": "kacper.kapusciak@swmansion.com",
   "license": "MIT",
+  "scripts": {
+    "build": "ncc build greeter/index.js"
+  },
   "dependencies": {
     "@actions/core": "^1.6.0",
     "@actions/github": "^5.0.0"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.33.0"
   }
 }
