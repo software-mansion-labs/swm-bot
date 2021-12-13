@@ -1,0 +1,10 @@
+name: Greeter
+description: Adds a 'hello' label to new issue
+inputs:
+  github_token:
+    description: A GitHub token.
+    required: false
+    default: ${{ github.token }}
+runs:
+  using: node12
+  main: index.js

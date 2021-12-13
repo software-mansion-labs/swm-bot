@@ -1,0 +1,13 @@
+{
+  "name": "swm-github-bot",
+  "version": "0.0.1",
+  "description": "Github Actions Bot used at Software Mansion for managing issues",
+  "main": "index.js",
+  "repository": "https://github.com/software-mansion-labs/swm-github-bot.git",
+  "author": "kacper.kapusciak@swmansion.com",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.6.0",
+    "@actions/github": "^5.0.0"
+  }
+}
