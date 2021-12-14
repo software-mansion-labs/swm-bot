@@ -28041,18 +28041,14 @@ async function run() {
   try {
     const githubToken = core.getInput('github_token');
 
-    const [owner, repo] = core.getInput('repo').split('/');
-    const number =
-      core.getInput('number') === ''
-        ? github.context.issue.number
-        : parseInt(core.getInput('number'));
-
     const client = new github.GitHub(githubToken);
+    const [owner, repo] = github.context.repo;
+
     await client.issues.addLabels({
       labels: ['hello'],
       owner,
       repo,
-      issue_number: number,
+      issue_number: github.context.issue.number,
     });
   } catch (e) {
     core.error(e);
