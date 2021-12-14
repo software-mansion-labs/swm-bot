@@ -1,7 +1,7 @@
 name: Greeter
 description: Adds a 'hello' label to new issue
 inputs:
-  github_token:
+  github-token:
     description: A GitHub token.
     required: false
     default: ${{ github.token }}
