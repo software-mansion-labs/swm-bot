@@ -3,16 +3,11 @@ const github = require('@actions/github');
 
 async function run() {
   try {
-    const githubToken = core.getInput('github_token');
-
-    const client = new github.GitHub(githubToken);
-    const [owner, repo] = github.context.repo;
-
-    await client.issues.addLabels({
-      labels: ['hello'],
-      owner,
-      repo,
+    await github.issues.addLabels({
       issue_number: github.context.issue.number,
+      owner: github.context.repo.owner,
+      repo: github.context.repo.repo,
+      labels: ['hello'],
     });
   } catch (e) {
     core.error(e);
