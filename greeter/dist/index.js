@@ -8454,7 +8454,7 @@ async function run() {
 
     await octokit.rest.issues.addLabels({
       ...context.repo,
-      issue_number,
+      issue_number: context.issue.number,
       labels: ['hello'],
     });
   } catch (e) {
