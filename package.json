@@ -7,7 +7,7 @@
   "author": "kacper.kapusciak@swmansion.com",
   "license": "MIT",
   "scripts": {
-    "build": "ncc build greeter/index.js"
+    "build": "sh -c 'ncc build ${0}/index.js -o ${0}/dist'"
   },
   "dependencies": {
     "@actions/core": "^1.6.0",
