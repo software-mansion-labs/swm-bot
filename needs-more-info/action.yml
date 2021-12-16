@@ -1,0 +1,20 @@
+name: Needs More Info
+description: Checks whether issue has filled issue template fields
+inputs:
+  github-token:
+    description: A GitHub token.
+    required: false
+    default: ${{ github.token }}
+
+  needs-more-info-label:
+    description: Name of the 'needs-more-info' label used in the repo
+    required: true
+    default: needs-more-info
+
+  required-sections:
+    description: List of names of required sections
+    required: true
+
+runs:
+  using: node12
+  main: './dist/index.js'
