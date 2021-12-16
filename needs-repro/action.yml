@@ -1,0 +1,25 @@
+name: Needs Repro
+description: Checks whether issue has a code reproduction
+inputs:
+  github-token:
+    description: A GitHub token.
+    required: false
+    default: ${{ github.token }}
+
+  needs-repro-label:
+    description: Name of the 'needs-repro' label used in the repo
+    required: true
+    default: needs-repro
+
+  repro-provided-label:
+    description: Name of the 'repro-provided' label used in the repo
+    required: true
+    default: repro-provided
+
+  no-repro-response:
+    description: GitHub Actions response when no reproduction provided
+    required: true
+
+runs:
+  using: node12
+  main: './dist/index.js'
