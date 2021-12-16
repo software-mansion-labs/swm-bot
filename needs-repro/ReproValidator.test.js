@@ -4,14 +4,14 @@ describe('ReproValidator', () => {
   describe('_hasSnackOrRepo', () => {
     it('should return false when issue body is empty', () => {
       const issueBody = ``;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasSnackOrRepo()).toBe(false);
     });
 
     it('should return false when no snack or repo', () => {
       const issueBody = `## Reproduction`;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasSnackOrRepo()).toBe(false);
     });
@@ -21,7 +21,7 @@ describe('ReproValidator', () => {
         ## Reproduction
         https://snack.expo.dev/@kacperkapusciak/example
       `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasSnackOrRepo()).toBe(true);
     });
@@ -31,7 +31,7 @@ describe('ReproValidator', () => {
       ## Reproduction
       https://github.com/kacperkapusciak/my-amazing-repro
     `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasSnackOrRepo()).toBe(true);
     });
@@ -42,61 +42,9 @@ describe('ReproValidator', () => {
       https://snack.expo.dev/@kacperkapusciak/example
       https://github.com/kacperkapusciak/my-amazing-repro
     `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasSnackOrRepo()).toBe(true);
-    });
-  });
-
-  describe('_isSectionEmpty', () => {
-    it('should return true when section is empty', () => {
-      const issueBody = `
-      ## Reproduction
-    `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
-
-      expect(reproValidator._isSectionEmpty()).toBe(true);
-    });
-
-    it('should return true when issue body is empty', () => {
-      const issueBody = ``;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
-
-      expect(reproValidator._isSectionEmpty()).toBe(true);
-    });
-
-    it('should return false when section is not empty', () => {
-      const issueBody = `
-      ## Reproduction
-      The quick brown fox jumps over the lazy dog
-    `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
-
-      expect(reproValidator._isSectionEmpty()).toBe(false);
-    });
-
-    it('should ignore comments', () => {
-      const issueBody = `
-      ## Reproduction
-
-      <!--A comment-->
-    `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
-
-      expect(reproValidator._isSectionEmpty()).toBe(true);
-    });
-
-    it('should ignore multiline comments', () => {
-      const issueBody = `
-      ## Reproduction
-
-      <!--
-      A comment
-      -->
-    `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
-
-      expect(reproValidator._isSectionEmpty()).toBe(true);
     });
   });
 
@@ -129,7 +77,7 @@ describe('ReproValidator', () => {
         );
       }
     `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasFunctions()).toBe(true);
     });
@@ -142,14 +90,14 @@ describe('ReproValidator', () => {
       import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
       import {createStackNavigator} from '@react-navigation/stack';
     `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasFunctions()).toBe(false);
     });
 
     it('should return false when snippet is empty', () => {
       const issueBody = ``;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasFunctions()).toBe(false);
     });
@@ -158,35 +106,35 @@ describe('ReproValidator', () => {
   describe('_hasVariables', () => {
     it('should return true when snippet has const variable', () => {
       const issueBody = `const Tab = createBottomTabNavigator();`;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasFunctions()).toBe(true);
     });
 
     it('should return true when snippet has let variable', () => {
       const issueBody = `let Tab = createBottomTabNavigator();`;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasFunctions()).toBe(true);
     });
 
     it('should return true when snippet has var variable', () => {
       const issueBody = `var Tab = createBottomTabNavigator();`;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasFunctions()).toBe(true);
     });
 
     it('should return false when const/let/var is used in a sentence', () => {
       const issueBody = `This variable constantly lets us to do something.`;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasFunctions()).toBe(false);
     });
 
     it('should return false when snippet is empty', () => {
       const issueBody = ``;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasFunctions()).toBe(false);
     });
@@ -209,7 +157,7 @@ describe('ReproValidator', () => {
       export default App;
       \`\`\`
       `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasBackticks()).toBe(true);
     });
@@ -222,14 +170,14 @@ describe('ReproValidator', () => {
       import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
       import {createStackNavigator} from '@react-navigation/stack';
       `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasBackticks()).toBe(false);
     });
 
     it('should return false when snippet is empty', () => {
       const issueBody = ``;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasBackticks()).toBe(false);
     });
@@ -244,7 +192,7 @@ describe('ReproValidator', () => {
       import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
       import {createStackNavigator} from '@react-navigation/stack';
     `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasImports()).toBe(true);
     });
@@ -256,14 +204,14 @@ describe('ReproValidator', () => {
       };
       export default App;
     `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasImports()).toBe(false);
     });
 
     it('should return false when snippet is empty', () => {
       const issueBody = ``;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasImports()).toBe(false);
     });
@@ -277,7 +225,7 @@ describe('ReproValidator', () => {
       };
       export default App;
     `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasExports()).toBe(true);
     });
@@ -290,14 +238,14 @@ describe('ReproValidator', () => {
       import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
       import {createStackNavigator} from '@react-navigation/stack';
     `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasExports()).toBe(false);
     });
 
     it('should return false when snippet is empty', () => {
       const issueBody = ``;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasExports()).toBe(false);
     });
@@ -316,7 +264,7 @@ describe('ReproValidator', () => {
         />
       </View>
     `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasJSX()).toBe(true);
     });
@@ -329,14 +277,14 @@ describe('ReproValidator', () => {
       import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
       import {createStackNavigator} from '@react-navigation/stack';
     `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasJSX()).toBe(false);
     });
 
     it('should return false when snippet is empty', () => {
       const issueBody = ``;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasJSX()).toBe(false);
     });
@@ -374,7 +322,7 @@ describe('ReproValidator', () => {
       
       export default App;
     `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasJavaScriptOrTypeScriptCode()).toBe(true);
     });
@@ -443,7 +391,7 @@ describe('ReproValidator', () => {
         );
       };
     `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasJavaScriptOrTypeScriptCode()).toBe(true);
     });
@@ -461,7 +409,7 @@ describe('ReproValidator', () => {
         return (<ReText text={text} />)
       }
       `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasJavaScriptOrTypeScriptCode()).toBe(true);
     });
@@ -483,9 +431,210 @@ describe('ReproValidator', () => {
       </Swipeable>
       \`\`\`
       `;
-      const reproValidator = new ReproValidator(issueBody, 'Reproduction', 'kacperkapusciak');
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasJavaScriptOrTypeScriptCode()).toBe(true);
+    });
+
+    it('should return false when snippet has no JS/TS code', () => {
+      const issueBody = `
+      \`\`\`
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
+      dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+      proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      \`\`\`
+      `;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator._hasJavaScriptOrTypeScriptCode()).toBe(false);
+    });
+  });
+
+  describe('isReproValid', () => {
+    it('should return false when issue body is empty', () => {
+      const issueBody = ``;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator.isReproValid()).toBe(false);
+    });
+
+    it('should return false when repro section is empty', () => {
+      const issueBody = `## Reproduction`;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator.isReproValid()).toBe(false);
+    });
+
+    it('should return false when repro section has no repro', () => {
+      const issueBody = `
+      ## Reproduction
+
+      I'll never provide a repro for you (┛ಠ_ಠ)┛彡┻━┻
+      `;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator.isReproValid()).toBe(false);
+    });
+
+    it('should return true when snack provided', () => {
+      const issueBody = `
+        ## Reproduction
+        https://snack.expo.dev/@kacperkapusciak/example
+      `;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator.isReproValid()).toBe(true);
+    });
+
+    it('should return true when repo provided', () => {
+      const issueBody = `
+      ## Reproduction
+      https://github.com/kacperkapusciak/my-amazing-repro
+    `;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator.isReproValid()).toBe(true);
+    });
+
+    it('should return true when both repo and snack provided', () => {
+      const issueBody = `
+      ## Reproduction
+      https://snack.expo.dev/@kacperkapusciak/example
+      https://github.com/kacperkapusciak/my-amazing-repro
+    `;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator.isReproValid()).toBe(true);
+    });
+
+    it('should return true when snack provided even when section title is removed', () => {
+      const issueBody = `
+        https://snack.expo.dev/@kacperkapusciak/example
+      `;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator.isReproValid()).toBe(true);
+    });
+
+    it('should return true for real reproduction from react-native-screens', () => {
+      const issueBody = `
+      ## Reproduction
+
+      import React from "react";
+      import { NavigationContainer } from "@react-navigation/native";
+      import { createNativeStackNavigator } from "react-native-screens/native-stack";
+      
+      const Stack = createNativeStackNavigator();
+      
+      const Screen = () => {
+        return null;
+      };
+      
+      const App = () => {
+        return (
+          <NavigationContainer>
+            <Stack.Navigator
+              initialRouteName="Screen"
+              screenOptions={{
+                headerTitle: "Title",
+                searchBar: {}
+              }}>
+              <Stack.Screen
+                name="Screen"
+                component={Screen} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        );
+      };
+      
+      export default App;
+    `;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator.isReproValid()).toBe(true);
+    });
+
+    it('should return false for real issue without reproduction from react-native-gesture-handler', () => {
+      const issueBody = `
+      ## Description
+
+      I am using a PanGestureHandler in my React Native app. This works perfectly on iOS. When I run on Android, I get nothing at all, no triggers. I have installed as per the guidelines and have made the change to MainActivity.java to add the ReactActivityDelegate. I am using React Navigation. I have also attempted to use the gestureHandlerRootHOC method without any luck. Is PanGestureHandler compatible with React Navigation?
+
+      ### Expected behavior
+      Pan gesture should trigger and work as per iOS
+
+      ### Actual behavior
+      No trigger at all on Android
+
+      <!--
+      Please provide a Snack ([https://snack.expo.io/](https://snack.expo.io/)) or provide a minimal code example that reproduces the problem.
+      Please provide code that can be copied and ran (with imports, please don't use pseudocode if possible).
+      Here are some tips for providing a minimal example: [https://stackoverflow.com/help/mcve](https://stackoverflow.com/help/mcve).
+      -->
+
+      ## Package versions
+
+      - React: 17.0.2
+      - React Native: 0.64.1
+      - React Native Gesture Handler: 1.10.3
+      - React Reanimated: 2.2.0
+      - React Navigation/bottom-tabs: 5.11.11
+      - React Navigation/native: 5.9.4
+      - React Navigation/stack": 5.14.5
+      `;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator.isReproValid()).toBe(false);
+    });
+
+    it('should return true for real comment with repro from react-native-gesture-handler', () => {
+      const issueBody = `
+      Here is the snippet for the gesture handler,
+
+      \`\`\`
+      const translation = {
+              x: useSharedValue(0),
+      };
+
+      const SWIPE_VELOCITY = 500;
+      const { width: screenWidth } = useWindowDimensions();
+      const hiddenTranslateX = 2 * screenWidth;
+
+      const gestureHandler = useAnimatedGestureHandler({
+              onStart: (_, ctx) => {
+                  ctx.startX = translation.x.value;
+              },
+              onActive: (event, ctx) => {
+                  if (flipped) {
+                      translation.x.value = ctx.startX + event.translationX;
+                  }
+              },
+              onEnd: (event) => {
+                  if (flipped) {
+                      if (Math.abs(event.velocityX) < SWIPE_VELOCITY) {
+                          translation.x.value = withSpring(0);
+
+                          return;
+                      }
+                      
+                      //perform actions with swipe
+                      translation.x.value = withSpring(Math.sign(event.velocityX * 10000) * hiddenTranslateX);
+                  }
+              },
+          });
+
+
+      return (
+          <PanGestureHandler onGestureEvent={gestureHandler}>
+              <Cards/>
+        </PanGestureHandler>
+      )
+      \`\`\`
+      `;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator.isReproValid()).toBe(true);
     });
   });
 });

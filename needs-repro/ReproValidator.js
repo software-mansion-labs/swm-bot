@@ -1,28 +1,7 @@
 class ReproValidator {
-  constructor(issueBody, section, user) {
+  constructor(issueBody, user) {
     this.issueBody = issueBody;
-    this.section = section;
     this.user = user;
-  }
-
-  _getSectionPosition() {
-    const regexp = new RegExp(`[#]+[ ]+${this.section}`);
-    return this.issueBody.search(regexp);
-  }
-
-  // Code adopted from https://github.com/karol-bisztyga/issue-validator/blob/main/index.js
-  _isSectionEmpty(sectionPosition) {
-    const sub = this.issueBody.substr(sectionPosition);
-    const sectionStartIndex = sub.search(new RegExp(`${this.section}`)) + this.section.length;
-    const nextSectionPos = sub.search(new RegExp('\n[#]+'));
-    const end = nextSectionPos === -1 ? undefined : nextSectionPos;
-    const sectionContent = sub.substring(sectionStartIndex, end);
-    // Regex adopted from https://stackoverflow.com/a/57996414/9999202
-    const sectionContentWithoutComment = sectionContent.replace(
-      /(<!--.*?-->)|(<!--[\S\s]+?-->)|(<!--[\S\s]*?$)/g,
-      ''
-    );
-    return sectionContentWithoutComment.replace(/\r?\n|\r/g, '').replace(/ /g, '').length === 0;
   }
 
   _hasSnackOrRepo() {
@@ -85,14 +64,8 @@ class ReproValidator {
     return this.issueBody.search(jsxRegex) !== -1;
   }
 
-  // TODO: call methods implemented above
   isReproValid() {
-    const sectionPosition = this._getSectionPosition();
-    if (sectionPosition !== -1) {
-      !_isSectionEmpty(sectionPosition);
-    } else {
-      return false;
-    }
+    return this._hasJavaScriptOrTypeScriptCode() || this._hasSnackOrRepo();
   }
 }
 
