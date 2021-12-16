@@ -8557,7 +8557,7 @@ async function run() {
       });
 
       try {
-        await github.issues.removeLabel({
+        await octokit.rest.issues.removeLabel({
           ...issueData,
           name: needsReproLabel,
         });
@@ -8567,13 +8567,13 @@ async function run() {
         }
       }
     } else {
-      const comments = await github.issues.listComments(issueData);
+      const comments = await octokit.rest.issues.listComments(issueData);
 
       if (comments.data.some((comment) => comment.body === noReproResponse)) {
         return;
       }
 
-      await github.issues.createComment({
+      await octokit.rest.issues.createComment({
         ...issueData,
         body: noReproResponse,
       });
