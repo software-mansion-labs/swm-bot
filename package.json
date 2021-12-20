@@ -7,7 +7,6 @@
   "author": "kacper.kapusciak@swmansion.com",
   "license": "MIT",
   "scripts": {
-    "build": "sh -c 'ncc build ${0}/index.js -o ${0}/dist'",
     "test": "jest",
     "test-watch": "jest --watch"
   },
@@ -17,7 +16,6 @@
     "@octokit/core": "^3.5.1"
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.33.0",
     "jest": "^27.4.5"
   }
 }
