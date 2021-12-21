@@ -15,6 +15,10 @@ inputs:
     description: List of names of required sections
     required: true
 
+  needs-more-info-response:
+    description: Start of GitHub Actions response when not enough information is provided
+    required: true
+
 runs:
   using: node12
   main: './index.js'
