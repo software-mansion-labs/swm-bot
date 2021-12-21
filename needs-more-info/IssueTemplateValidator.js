@@ -1,4 +1,4 @@
-class ReproValidator {
+class IssueTemplateValidator {
   constructor(issueBody, requiredSections) {
     this.issueBody = issueBody;
     this.requiredSections = requiredSections;
@@ -29,11 +29,12 @@ class ReproValidator {
     return sectionContentWithoutComment.replace(/\r?\n|\r/g, '').replace(/ /g, '').length === 0;
   }
 
-  // TODO: implement
   validate() {
-    throw new Error('Not implemented');
-    return [];
+    const removedSections = this.requiredSections.filter((section) => this._sectionExists(section));
+    const emptySections = this.requiredSections.filter((section) => this._isSectionEmpty(section));
+
+    return [...new Set([...removedSections, ...emptySections])];
   }
 }
 
-module.exports = ReproValidator;
+module.exports = IssueTemplateValidator;
