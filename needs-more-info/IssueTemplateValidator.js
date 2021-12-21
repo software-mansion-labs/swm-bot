@@ -26,7 +26,8 @@ class IssueTemplateValidator {
       /(<!--.*?-->)|(<!--[\S\s]+?-->)|(<!--[\S\s]*?$)/g,
       ''
     );
-    return sectionContentWithoutComment.replace(/\r?\n|\r/g, '').replace(/ /g, '').length === 0;
+    // When section has less than 3 characters it is treated as empty
+    return sectionContentWithoutComment.replace(/\r?\n|\r/g, '').replace(/ /g, '').length <= 3;
   }
 
   validate() {

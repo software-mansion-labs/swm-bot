@@ -49,6 +49,26 @@ describe('IssueTemplateValidator', () => {
       expect(issueTemplateValidator._isSectionEmpty('Reproduction')).toBe(true);
     });
 
+    it('should return true when section has less than 4 characters', () => {
+      const issueBody = `
+      ## Reproduction
+      asd
+      `;
+      const issueTemplateValidator = new IssueTemplateValidator(issueBody, ['Reproduction']);
+
+      expect(issueTemplateValidator._isSectionEmpty('Reproduction')).toBe(true);
+    });
+
+    it('should return true when section has more than 4 characters', () => {
+      const issueBody = `
+      ## Reproduction
+      No repro yet.
+      `;
+      const issueTemplateValidator = new IssueTemplateValidator(issueBody, ['Reproduction']);
+
+      expect(issueTemplateValidator._isSectionEmpty('Reproduction')).toBe(false);
+    });
+
     it('should return true when issue body is empty', () => {
       const issueBody = ``;
       const issueTemplateValidator = new IssueTemplateValidator(issueBody, ['Reproduction']);
