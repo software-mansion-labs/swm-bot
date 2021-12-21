@@ -15,6 +15,10 @@ class MissingSectionsFormatter {
 
     return `${response} ${beginning} ${invalidSections[0]} ${ending}`;
   }
+
+  parse(semicolonSeparatedString) {
+    return semicolonSeparatedString.split(';');
+  }
 }
 
 module.exports = MissingSectionsFormatter;

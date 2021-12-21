@@ -6,7 +6,7 @@ async function run() {
   try {
     const githubToken = core.getInput('github-token');
     const needsMoreInfoLabel = core.getInput('needs-more-info-label');
-    const requiredSections = core.getInput('required-sections');
+    const requiredSectionsString = core.getInput('required-sections');
     const needsMoreInfoResponse = core.getInput('needs-more-info-response');
 
     const octokit = github.getOctokit(githubToken);
@@ -24,6 +24,9 @@ async function run() {
     const body = payload.comment ? payload.comment.body : payload.issue.body;
     const user = payload.sender.login;
 
+    const missingSectionsFormatter = new MissingSectionsFormatter();
+    const requiredSections = missingSectionsFormatter.parse(requiredSectionsString);
+
     const issueTemplateValidator = new IssueTemplateValidator(body, user, requiredSections);
     const invalidSections = issueTemplateValidator.validate();
 
@@ -33,8 +36,6 @@ async function run() {
         issue_number: context.issue.number,
         labels: [needsMoreInfoLabel],
       });
-
-      const missingSectionsFormatter = new MissingSectionsFormatter();
 
       const formattedResponse = missingSectionsFormatter.format(
         needsMoreInfoResponse,
