@@ -9,11 +9,11 @@ class MissingSectionsFormatter {
     if (manySections) {
       const invalidSectionsCopy = [...invalidSections];
       const last = invalidSectionsCopy.pop();
-      const formattedSections = invalidSectionsCopy.map((section) => ` ${section}`);
-      return `${response} ${beginning}${formattedSections} and ${last} ${ending}`;
+      const formattedSections = invalidSectionsCopy.map((section) => ` **${section}**`);
+      return `${response}\n\n${beginning}${formattedSections} and **${last}** ${ending}`;
     }
 
-    return `${response} ${beginning} ${invalidSections[0]} ${ending}`;
+    return `${response}\n\n${beginning} **${invalidSections[0]}** ${ending}`;
   }
 
   parse(semicolonSeparatedString) {
