@@ -7,7 +7,7 @@ async function run() {
     const githubToken = core.getInput('github-token');
     const needsReproLabel = core.getInput('needs-repro-label');
     const reproProvidedLabel = core.getInput('repro-provided-label');
-    const noReproResponse = core.getInput('no-repro-response');
+    const needsReproResponse = core.getInput('needs-repro-response');
 
     const octokit = github.getOctokit(githubToken);
 
@@ -46,13 +46,13 @@ async function run() {
     } else {
       const comments = await octokit.rest.issues.listComments(issueData);
 
-      if (comments.data.some((comment) => comment.body === noReproResponse)) {
+      if (comments.data.some((comment) => comment.body === needsReproResponse)) {
         return;
       }
 
       await octokit.rest.issues.createComment({
         ...issueData,
-        body: noReproResponse,
+        body: needsReproResponse,
       });
 
       await octokit.rest.issues.addLabels({

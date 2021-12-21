@@ -16,7 +16,7 @@ inputs:
     required: true
     default: repro-provided
 
-  no-repro-response:
+  needs-repro-response:
     description: GitHub Actions response when no reproduction provided
     required: true
 
