@@ -1,6 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const IssueTemplateValidator = require('./IssueTemplateValidator');
+const MissingSectionsFormatter = require('./MissingSectionsFormatter');
 
 async function run() {
   try {
