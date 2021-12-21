@@ -90,4 +90,62 @@ describe('IssueTemplateValidator', () => {
       expect(issueTemplateValidator._isSectionEmpty('Reproduction')).toBe(true);
     });
   });
+
+  describe('validate', () => {
+    it('should return empty array when issue body has required sections', () => {
+      const issueBody = `
+      ## Reproduction
+      The quick brown fox jumps over the lazy dog
+      `;
+      const issueTemplateValidator = new IssueTemplateValidator(issueBody, ['Reproduction']);
+
+      expect(issueTemplateValidator.validate()).toStrictEqual([]);
+    });
+
+    it('should return missing sections when issue body is missing these sections', () => {
+      const issueBody = `
+      ## Reproduction
+      The quick brown fox jumps over the lazy dog
+      `;
+      const issueTemplateValidator = new IssueTemplateValidator(issueBody, [
+        'Reproduction',
+        'Description',
+        'Platform',
+      ]);
+
+      expect(issueTemplateValidator.validate()).toStrictEqual(['Description', 'Platform']);
+    });
+
+    it('should return missing sections when issue body is missing these sections', () => {
+      const issueBody = `
+      ## Reproduction
+      The quick brown fox jumps over the lazy dog
+
+      ## Description
+      The quick brown fox jumps over the lazy dog
+      `;
+      const issueTemplateValidator = new IssueTemplateValidator(issueBody, [
+        'Reproduction',
+        'Description',
+        'Platform',
+      ]);
+
+      expect(issueTemplateValidator.validate()).toStrictEqual(['Platform']);
+    });
+
+    it('should return missing sections when issue body is empty', () => {
+      const issueBody = ``;
+      const issueTemplateValidator = new IssueTemplateValidator(issueBody, [
+        'Reproduction',
+        'Description',
+        'Platform',
+      ]);
+
+      expect(issueTemplateValidator.validate()).toStrictEqual([
+        'Reproduction',
+        'Description',
+        'Platform',
+      ]);
+    });
+  });
 });

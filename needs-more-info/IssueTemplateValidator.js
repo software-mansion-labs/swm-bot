@@ -30,7 +30,9 @@ class IssueTemplateValidator {
   }
 
   validate() {
-    const removedSections = this.requiredSections.filter((section) => this._sectionExists(section));
+    const removedSections = this.requiredSections.filter(
+      (section) => !this._sectionExists(section)
+    );
     const emptySections = this.requiredSections.filter((section) => this._isSectionEmpty(section));
 
     return [...new Set([...removedSections, ...emptySections])];

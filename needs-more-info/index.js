@@ -21,14 +21,12 @@ async function run() {
     };
 
     const { payload } = context;
-
-    const body = payload.comment ? payload.comment.body : payload.issue.body;
-    const user = payload.sender.login;
+    const { body } = payload.issue;
 
     const missingSectionsFormatter = new MissingSectionsFormatter();
     const requiredSections = missingSectionsFormatter.parse(requiredSectionsString);
 
-    const issueTemplateValidator = new IssueTemplateValidator(body, user, requiredSections);
+    const issueTemplateValidator = new IssueTemplateValidator(body, requiredSections);
     const invalidSections = issueTemplateValidator.validate();
 
     if (invalidSections.length) {
