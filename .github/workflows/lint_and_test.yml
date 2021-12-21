@@ -9,10 +9,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  install-and-lint:
+  lint-and-test:
     runs-on: ubuntu-latest
     concurrency:
-      group: install-and-lint-${{ github.ref }}
+      group: lint-and-test-${{ github.ref }}
       cancel-in-progress: true
     steps:
       - name: Checkout actions
