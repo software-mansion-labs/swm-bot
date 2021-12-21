@@ -400,7 +400,7 @@ describe('ReproValidator', () => {
       const issueBody = `
       function CountUp({ value }) {
         const animatedValue = useSharedValue(value);
-        const text = useDerivedValue(() => \`\$\{animatedValue.value\}\`, [animatedValue]);
+        const text = useDerivedValue(() => \`$\{animatedValue.value}\`, [animatedValue]);
       
         useEffect(() => {
           animatedValue.value = withTiming(value);

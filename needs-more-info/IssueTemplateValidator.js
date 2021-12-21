@@ -18,7 +18,7 @@ class IssueTemplateValidator {
     const sectionPosition = this._getSectionPosition(section);
     const sub = this.issueBody.substr(sectionPosition);
     const sectionStartIndex = sub.search(new RegExp(`${section}`)) + section.length;
-    const nextSectionPos = sub.search(new RegExp('\n[#]+'));
+    const nextSectionPos = sub.search(/\n[#]+/);
     const end = nextSectionPos === -1 ? undefined : nextSectionPos;
     const sectionContent = sub.substring(sectionStartIndex, end);
     // Regex adopted from https://stackoverflow.com/a/57996414/9999202

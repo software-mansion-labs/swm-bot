@@ -8,7 +8,8 @@
   "license": "MIT",
   "scripts": {
     "test": "jest",
-    "test-watch": "jest --watch"
+    "test-watch": "jest --watch",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@actions/core": "^1.6.0",
@@ -16,6 +17,15 @@
     "@octokit/core": "^3.5.1"
   },
   "devDependencies": {
-    "jest": "^27.4.5"
+    "eslint": "^8.5.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jest": "^25.3.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "jest": "^27.4.5",
+    "prettier": "^2.5.1"
   }
 }

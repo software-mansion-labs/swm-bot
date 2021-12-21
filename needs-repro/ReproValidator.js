@@ -32,15 +32,12 @@ class ReproValidator {
   }
 
   _hasFunctions() {
-    const functionsRegex = new RegExp(
-      '(function\\s.*\\(.*\\)\\s?{.*)|(\\w+\\(.*\\))|(\\)\\s?=>\\s?)',
-      'gm'
-    );
+    const functionsRegex = /(function\s.*\(.*\)\s?{.*)|(\w+\(.*\))|(\)\s?=>\s?)/gm;
     return this.issueBody.search(functionsRegex) !== -1;
   }
 
   _hasVariables() {
-    const variablesRegex = new RegExp('(const|let|var)\\s\\w+\\s+=', 'gm');
+    const variablesRegex = /(const|let|var)\s\w+\s+=/gm;
     return this.issueBody.search(variablesRegex) !== -1;
   }
 
@@ -50,17 +47,17 @@ class ReproValidator {
   }
 
   _hasImports() {
-    const importsRegex = new RegExp('import\\s.*from\\s(\'|").*(\'|")', 'gm');
+    const importsRegex = /import\s.*from\s('|").*('|")/gm;
     return this.issueBody.search(importsRegex) !== -1;
   }
 
   _hasExports() {
-    const exportsRegex = new RegExp('export\\s(const|var|let|function|default)', 'gm');
+    const exportsRegex = /export\s(const|var|let|function|default)/gm;
     return this.issueBody.search(exportsRegex) !== -1;
   }
 
   _hasJSX() {
-    const jsxRegex = new RegExp('(<\\w+)|(<\\/\\w+>)', 'gm');
+    const jsxRegex = /(<\w+)|(<\/\w+>)/gm;
     return this.issueBody.search(jsxRegex) !== -1;
   }
 
