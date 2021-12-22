@@ -1,6 +1,6 @@
 class ReproValidator {
   constructor(issueBody, user) {
-    this.issueBody = issueBody;
+    this.issueBody = issueBody || '';
     this.user = user;
   }
 

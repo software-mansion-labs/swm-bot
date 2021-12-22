@@ -1,6 +1,6 @@
 class IssueTemplateValidator {
   constructor(issueBody, requiredSections) {
-    this.issueBody = issueBody;
+    this.issueBody = issueBody || '';
     this.requiredSections = requiredSections;
   }
 

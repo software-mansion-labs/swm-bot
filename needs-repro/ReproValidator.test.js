@@ -9,6 +9,20 @@ describe('ReproValidator', () => {
       expect(reproValidator._hasSnackOrRepo()).toBe(false);
     });
 
+    it('should return false when issue body is null', () => {
+      const issueBody = null;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator._hasSnackOrRepo()).toBe(false);
+    });
+
+    it('should return false when issue body is undefined', () => {
+      const issueBody = undefined;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator._hasSnackOrRepo()).toBe(false);
+    });
+
     it('should return false when no snack or repo', () => {
       const issueBody = `## Reproduction`;
       const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
@@ -101,6 +115,20 @@ describe('ReproValidator', () => {
 
       expect(reproValidator._hasFunctions()).toBe(false);
     });
+
+    it('should return false when snippet is null', () => {
+      const issueBody = null;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator._hasFunctions()).toBe(false);
+    });
+
+    it('should return false when snippet is undefined', () => {
+      const issueBody = undefined;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator._hasFunctions()).toBe(false);
+    });
   });
 
   describe('_hasVariables', () => {
@@ -134,6 +162,20 @@ describe('ReproValidator', () => {
 
     it('should return false when snippet is empty', () => {
       const issueBody = ``;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator._hasFunctions()).toBe(false);
+    });
+
+    it('should return false when snippet is null', () => {
+      const issueBody = null;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator._hasFunctions()).toBe(false);
+    });
+
+    it('should return false when snippet is undefined', () => {
+      const issueBody = undefined;
       const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasFunctions()).toBe(false);
@@ -177,6 +219,20 @@ describe('ReproValidator', () => {
 
     it('should return false when snippet is empty', () => {
       const issueBody = ``;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator._hasBackticks()).toBe(false);
+    });
+
+    it('should return false when snippet is null', () => {
+      const issueBody = null;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator._hasBackticks()).toBe(false);
+    });
+
+    it('should return false when snippet is undefined', () => {
+      const issueBody = undefined;
       const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasBackticks()).toBe(false);
@@ -284,6 +340,20 @@ describe('ReproValidator', () => {
 
     it('should return false when snippet is empty', () => {
       const issueBody = ``;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator._hasJSX()).toBe(false);
+    });
+
+    it('should return false when snippet is null', () => {
+      const issueBody = null;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator._hasJSX()).toBe(false);
+    });
+
+    it('should return false when snippet is undefined', () => {
+      const issueBody = undefined;
       const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator._hasJSX()).toBe(false);
@@ -449,11 +519,46 @@ describe('ReproValidator', () => {
 
       expect(reproValidator._hasJavaScriptOrTypeScriptCode()).toBe(false);
     });
+
+    it('should return false when snippet is empty', () => {
+      const issueBody = ``;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator._hasJavaScriptOrTypeScriptCode()).toBe(false);
+    });
+
+    it('should return false when snippet is null', () => {
+      const issueBody = null;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator._hasJavaScriptOrTypeScriptCode()).toBe(false);
+    });
+
+    it('should return false when snippet is undefined', () => {
+      const issueBody = undefined;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator._hasJavaScriptOrTypeScriptCode()).toBe(false);
+    });
   });
 
   describe('isReproValid', () => {
     it('should return false when issue body is empty', () => {
       const issueBody = ``;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator.isReproValid()).toBe(false);
+    });
+
+    it('should return false when issue body is null', () => {
+      const issueBody = null;
+      const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
+
+      expect(reproValidator.isReproValid()).toBe(false);
+    });
+
+    it('should return false when issue body is undefined', () => {
+      const issueBody = undefined;
       const reproValidator = new ReproValidator(issueBody, 'kacperkapusciak');
 
       expect(reproValidator.isReproValid()).toBe(false);

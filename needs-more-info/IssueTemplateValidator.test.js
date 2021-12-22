@@ -9,6 +9,20 @@ describe('IssueTemplateValidator', () => {
       expect(issueTemplateValidator._sectionExists('Reproduction')).toBe(false);
     });
 
+    it('should return false when issue body is null', () => {
+      const issueBody = null;
+      const issueTemplateValidator = new IssueTemplateValidator(issueBody, ['Reproduction']);
+
+      expect(issueTemplateValidator._sectionExists('Reproduction')).toBe(false);
+    });
+
+    it('should return false when issue body is undefined', () => {
+      const issueBody = undefined;
+      const issueTemplateValidator = new IssueTemplateValidator(issueBody, ['Reproduction']);
+
+      expect(issueTemplateValidator._sectionExists('Reproduction')).toBe(false);
+    });
+
     it('should return true when section is present in issue body', () => {
       const issueBody = `
       ## Reproduction
@@ -44,6 +58,20 @@ describe('IssueTemplateValidator', () => {
       const issueBody = `
       ## Reproduction
       `;
+      const issueTemplateValidator = new IssueTemplateValidator(issueBody, ['Reproduction']);
+
+      expect(issueTemplateValidator._isSectionEmpty('Reproduction')).toBe(true);
+    });
+
+    it('should return true when section is null', () => {
+      const issueBody = null;
+      const issueTemplateValidator = new IssueTemplateValidator(issueBody, ['Reproduction']);
+
+      expect(issueTemplateValidator._isSectionEmpty('Reproduction')).toBe(true);
+    });
+
+    it('should return true when section is undefined', () => {
+      const issueBody = undefined;
       const issueTemplateValidator = new IssueTemplateValidator(issueBody, ['Reproduction']);
 
       expect(issueTemplateValidator._isSectionEmpty('Reproduction')).toBe(true);
@@ -155,6 +183,36 @@ describe('IssueTemplateValidator', () => {
 
     it('should return missing sections when issue body is empty', () => {
       const issueBody = ``;
+      const issueTemplateValidator = new IssueTemplateValidator(issueBody, [
+        'Reproduction',
+        'Description',
+        'Platform',
+      ]);
+
+      expect(issueTemplateValidator.validate()).toStrictEqual([
+        'Reproduction',
+        'Description',
+        'Platform',
+      ]);
+    });
+
+    it('should return missing sections when issue body is null', () => {
+      const issueBody = null;
+      const issueTemplateValidator = new IssueTemplateValidator(issueBody, [
+        'Reproduction',
+        'Description',
+        'Platform',
+      ]);
+
+      expect(issueTemplateValidator.validate()).toStrictEqual([
+        'Reproduction',
+        'Description',
+        'Platform',
+      ]);
+    });
+
+    it('should return missing sections when issue body is undefined', () => {
+      const issueBody = undefined;
       const issueTemplateValidator = new IssueTemplateValidator(issueBody, [
         'Reproduction',
         'Description',
