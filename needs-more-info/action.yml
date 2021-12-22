@@ -1,5 +1,5 @@
 name: Needs More Info
-description: Checks whether issue has filled issue template fields
+description: Checks whether the issue template fields are filled
 inputs:
   github-token:
     description: A GitHub token.
@@ -12,7 +12,7 @@ inputs:
     default: needs-more-info
 
   required-sections:
-    description: List of names of required sections
+    description: Semicolon separated list of names of required sections eg. 'Description;Reproduction;Platform'
     required: true
 
   needs-more-info-response:

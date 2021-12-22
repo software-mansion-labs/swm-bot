@@ -1,5 +1,5 @@
 name: Needs Repro
-description: Checks whether issue has a code reproduction
+description: Checks whether issue has a snack, GitHub repo or a snippet of code
 inputs:
   github-token:
     description: A GitHub token.
