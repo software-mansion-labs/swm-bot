@@ -49,6 +49,17 @@ async function run() {
         labels: [needsReproLabel],
       });
 
+      try {
+        await octokit.rest.issues.removeLabel({
+          ...issueData,
+          name: reproProvidedLabel,
+        });
+      } catch (error) {
+        if (!/Label does not exist/.test(error.message)) {
+          throw error;
+        }
+      }
+
       const comments = await octokit.rest.issues.listComments(issueData);
 
       if (comments.data.some((comment) => comment.body === needsReproResponse)) {
