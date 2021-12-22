@@ -16,7 +16,7 @@ class ReproValidator {
   // Heuristic way to guess with some confidence that a snippet has some JS/TS code
   _hasJavaScriptOrTypeScriptCode() {
     // This method is splitted into separate methods for easier testing
-    const testConditionsArr = [
+    const testConditions = [
       this._hasFunctions(),
       this._hasVariables(),
       this._hasBackticks(),
@@ -25,8 +25,7 @@ class ReproValidator {
       this._hasJSX(),
     ];
     // Code adopted from https://stackoverflow.com/a/42317235/9999202
-    const percentOfConditionsMet =
-      testConditionsArr.filter(Boolean).length / testConditionsArr.length;
+    const percentOfConditionsMet = testConditions.filter(Boolean).length / testConditions.length;
 
     return percentOfConditionsMet >= 0.5;
   }
