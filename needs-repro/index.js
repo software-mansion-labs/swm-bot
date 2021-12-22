@@ -44,6 +44,11 @@ async function run() {
         }
       }
     } else {
+      await octokit.rest.issues.addLabels({
+        ...issueData,
+        labels: [needsReproLabel],
+      });
+
       const comments = await octokit.rest.issues.listComments(issueData);
 
       if (comments.data.some((comment) => comment.body === needsReproResponse)) {
@@ -53,11 +58,6 @@ async function run() {
       await octokit.rest.issues.createComment({
         ...issueData,
         body: needsReproResponse,
-      });
-
-      await octokit.rest.issues.addLabels({
-        ...issueData,
-        labels: [needsReproLabel],
       });
     }
   } catch (e) {
