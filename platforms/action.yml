@@ -1,0 +1,15 @@
+name: Platforms
+description: Assigns labels to user-selected platforms in the issue template
+inputs:
+  github-token:
+    description: A GitHub token.
+    required: false
+    default: ${{ github.token }}
+
+  platforms-with-labels:
+    description: Dictionary with platforms and corresponding labels used in the repo
+    required: true
+
+runs:
+  using: node12
+  main: './index.js'
