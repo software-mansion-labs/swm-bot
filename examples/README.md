@@ -25,6 +25,8 @@ jobs:
         with:
 # Repository within actions are implemented
           repository: 'software-mansion-labs/swmansion-bot'
+# You can omit this to use actions from the main branch (not recommended)
+          ref: stable
 
 # Installation
       - name: Install Actions
