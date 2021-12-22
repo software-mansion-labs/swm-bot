@@ -1,0 +1,39 @@
+name: Needs More Info
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: needs-more-info-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout Actions
+        uses: actions/checkout@v2
+        with:
+          repository: 'software-mansion-labs/swmansion-bot'
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Use yarn cache
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install Actions
+        run: yarn install
+
+      - name: Needs More Info
+        uses: ./needs-more-info
+        with:
+          needs-more-info-label: needs-more-info
+          required-sections: 'Description;Steps To Reproduce;Reproduction;Platform'
+          needs-more-info-response: "Hey! 👋 \n\n Thank you for submitting an issue. It looks like you've omitted a few important sections from the issue template. Could you provide more information about the problem? We need all the information we can get in order to help you."
