@@ -36,6 +36,12 @@ async function run() {
         labels: [needsMoreInfoLabel],
       });
 
+      const comments = await octokit.rest.issues.listComments(issueData);
+
+      if (comments.data.some((comment) => comment.body.includes(needsMoreInfoResponse))) {
+        return;
+      }
+
       const formattedResponse = missingSectionsFormatter.format(
         needsMoreInfoResponse,
         invalidSections
