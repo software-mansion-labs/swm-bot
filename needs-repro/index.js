@@ -24,11 +24,10 @@ async function run() {
     const body = payload.comment ? payload.comment.body : payload.issue.body;
     const user = payload.sender.login;
 
-    const reproValidator = new ReproValidator(body, user);
-
     const comments = await octokit.rest.issues.listComments(issueData);
-
     const comment = comments.data.find((comment) => comment.body === needsReproResponse);
+
+    const reproValidator = new ReproValidator(body, user);
 
     // Code adopted from https://github.com/react-navigation/react-navigation/blob/main/.github/workflows/check-repro.yml
     if (reproValidator.isReproValid()) {
