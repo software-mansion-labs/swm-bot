@@ -51,6 +51,59 @@ describe('IssueTemplateValidator', () => {
       expect(issueTemplateValidator._sectionExists('Description')).toBe(true);
       expect(issueTemplateValidator._sectionExists('Food')).toBe(false);
     });
+
+    it('should return false when section is commented out but present in issue body', () => {
+      const issueBody = `
+      <!--
+      ## Reproduction
+      My great repro
+      -->
+      `;
+      const issueTemplateValidator = new IssueTemplateValidator(issueBody, ['Reproduction']);
+
+      expect(issueTemplateValidator._sectionExists('Reproduction')).toBe(false);
+    });
+  });
+
+  describe('_removeComments', () => {
+    it('should return empty string when string consists only of html comments', () => {
+      const str = `<!-- -->`;
+      const issueTemplateValidator = new IssueTemplateValidator('', []);
+
+      expect(issueTemplateValidator._removeComments(str)).toBe('');
+    });
+
+    it("should return text that's not between comments", () => {
+      const str = `Hello<!-- -->`;
+      const issueTemplateValidator = new IssueTemplateValidator('', []);
+
+      expect(issueTemplateValidator._removeComments(str)).toBe('Hello');
+    });
+
+    it("should return text that's not between multiline comments", () => {
+      const str = `Hello<!-- 
+      Hidden
+      -->`;
+      const issueTemplateValidator = new IssueTemplateValidator('', []);
+
+      expect(issueTemplateValidator._removeComments(str)).toBe('Hello');
+    });
+
+    it("should return text that's not between multiple multiline comments", () => {
+      const str = `Hello<!-- 
+      Hidden
+      --><!-- Also hidden -->`;
+      const issueTemplateValidator = new IssueTemplateValidator('', []);
+
+      expect(issueTemplateValidator._removeComments(str)).toBe('Hello');
+    });
+
+    it('should return the same text when no comments are present', () => {
+      const str = `Hello`;
+      const issueTemplateValidator = new IssueTemplateValidator('', []);
+
+      expect(issueTemplateValidator._removeComments(str)).toBe('Hello');
+    });
   });
 
   describe('_isSectionEmpty', () => {
