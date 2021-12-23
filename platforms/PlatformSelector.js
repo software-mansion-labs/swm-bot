@@ -1,6 +1,8 @@
+const removeComments = require('../common/removeComments');
+
 class PlatformSelector {
   constructor(issueBody, platformsWithLabelsString) {
-    this.issueBody = issueBody || '';
+    this.issueBody = removeComments(issueBody || '');
     this.platformsWithLabels = JSON.parse(platformsWithLabelsString);
   }
 

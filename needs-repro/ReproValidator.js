@@ -1,6 +1,8 @@
+const removeComments = require('../common/removeComments');
+
 class ReproValidator {
   constructor(issueBody, user) {
-    this.issueBody = issueBody || '';
+    this.issueBody = removeComments(issueBody || '');
     this.user = user;
   }
 
