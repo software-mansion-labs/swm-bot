@@ -23,6 +23,9 @@ async function run() {
     const { payload } = context;
     const { body } = payload.issue;
 
+    const comments = await octokit.rest.issues.listComments(issueData);
+    const comment = comments.data.find((comment) => comment.body.includes(needsMoreInfoResponse));
+
     const missingSectionsFormatter = new MissingSectionsFormatter();
     const requiredSections = missingSectionsFormatter.parse(requiredSectionsString);
 
@@ -36,21 +39,23 @@ async function run() {
         labels: [needsMoreInfoLabel],
       });
 
-      const comments = await octokit.rest.issues.listComments(issueData);
-
-      if (comments.data.some((comment) => comment.body.includes(needsMoreInfoResponse))) {
-        return;
-      }
-
       const formattedResponse = missingSectionsFormatter.format(
         needsMoreInfoResponse,
         invalidSections
       );
 
-      await octokit.rest.issues.createComment({
-        ...issueData,
-        body: formattedResponse,
-      });
+      if (!comment) {
+        await octokit.rest.issues.createComment({
+          ...issueData,
+          body: formattedResponse,
+        });
+      } else {
+        await octokit.rest.issues.updateComment({
+          ...issueData,
+          comment_id: comment.id,
+          body: formattedResponse,
+        });
+      }
     } else {
       try {
         await octokit.rest.issues.removeLabel({
@@ -62,6 +67,13 @@ async function run() {
           throw error;
         }
       }
+
+      if (!comment) return;
+
+      await octokit.rest.issues.deleteComment({
+        ...issueData,
+        comment_id: comment.id,
+      });
     }
   } catch (e) {
     core.error(e);
