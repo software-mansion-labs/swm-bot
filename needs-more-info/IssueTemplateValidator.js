@@ -1,8 +1,8 @@
-const removeComments = require('../common/removeComments');
+const normalizeIssue = require('../common/normalizeIssue');
 
 class IssueTemplateValidator {
   constructor(issueBody, requiredSections) {
-    this.issueBody = removeComments(issueBody || '');
+    this.issueBody = normalizeIssue(issueBody ?? '');
     this.requiredSections = requiredSections;
   }
 

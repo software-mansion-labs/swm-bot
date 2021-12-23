@@ -1,8 +1,8 @@
-const removeComments = require('../common/removeComments');
+const normalizeIssue = require('../common/normalizeIssue');
 
 class PlatformSelector {
   constructor(issueBody, platformsWithLabelsString) {
-    this.issueBody = removeComments(issueBody || '');
+    this.issueBody = normalizeIssue(issueBody ?? '');
     this.platformsWithLabels = JSON.parse(platformsWithLabelsString);
   }
 
