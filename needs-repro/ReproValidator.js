@@ -2,7 +2,7 @@ const normalizeIssue = require('../common/normalizeIssue');
 
 class ReproValidator {
   constructor(issueBody, user) {
-    this.issueBody = normalizeIssue(issueBody ?? '');
+    this.issueBody = normalizeIssue(issueBody || '');
     this.user = user;
   }
 
