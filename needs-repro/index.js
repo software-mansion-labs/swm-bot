@@ -50,16 +50,10 @@ async function run() {
 
       if (!comment) return;
 
-      try {
-        await octokit.rest.issues.deleteComment({
-          ...issueData,
-          comment_id: comment.id,
-        });
-      } catch (error) {
-        if (!/Comment does not exist/.test(error.message)) {
-          throw error;
-        }
-      }
+      await octokit.rest.issues.deleteComment({
+        ...issueData,
+        comment_id: comment.id,
+      });
     } else {
       await octokit.rest.issues.addLabels({
         ...issueData,
