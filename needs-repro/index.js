@@ -25,12 +25,21 @@ async function run() {
     const user = payload.sender.login;
 
     const comments = await octokit.rest.issues.listComments(issueData);
-    const comment = comments.data.find((comment) => comment.body === needsReproResponse);
+    const commentBodies = comments.data.map((comment) => comment.body);
+    const botComment = commentBodies.find((body) => body === needsReproResponse);
 
-    const reproValidator = new ReproValidator(body, user);
+    const issueAndComments = [body, ...commentBodies];
+    // Code adopted from https://stackoverflow.com/a/9229821/9999202
+    const issueAndCommentsUniq = [...new Set(issueAndComments)];
+
+    const reproValidator = new ReproValidator(user);
+    const hasValidRepro = issueAndCommentsUniq.some((body) => {
+      // ONCE TOLD ME
+      return reproValidator.isReproValid(body);
+    });
 
     // Code adopted from https://github.com/react-navigation/react-navigation/blob/main/.github/workflows/check-repro.yml
-    if (reproValidator.isReproValid()) {
+    if (hasValidRepro) {
       await octokit.rest.issues.addLabels({
         ...issueData,
         labels: [reproProvidedLabel],
@@ -47,11 +56,11 @@ async function run() {
         }
       }
 
-      if (!comment) return;
+      if (!botComment) return;
 
       await octokit.rest.issues.deleteComment({
         ...issueData,
-        comment_id: comment.id,
+        comment_id: botComment.id,
       });
     } else {
       await octokit.rest.issues.addLabels({
@@ -70,7 +79,7 @@ async function run() {
         }
       }
 
-      if (comment) return;
+      if (botComment) return;
 
       await octokit.rest.issues.createComment({
         ...issueData,
