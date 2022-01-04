@@ -23,10 +23,12 @@ async function run() {
 
     const user = payload.sender.login;
     // Code adopted from https://docs.github.com/en/rest/reference/issues#get-an-issue
-    const { data: issue } = await octokit.request(
-      'GET /repos/{owner}/{repo}/issues/{issue_number}',
-      issueData
-    );
+    // const { data: issue } = await octokit.request(
+    //   'GET /repos/{owner}/{repo}/issues/{issue_number}',
+    //   issueData
+    // );
+
+    const issue = await octokit.rest.issues.get(issueData);
 
     console.log(issue);
 
@@ -34,14 +36,12 @@ async function run() {
 
     const comments = await octokit.rest.issues.listComments(issueData);
     const commentBodies = comments.data.map((comment) => comment.body);
-    console.log('commentBodies', commentBodies);
+
     const botComment = commentBodies.find((body) => body === needsReproResponse);
 
     const issueAndComments = [body, ...commentBodies];
-    console.log({ issueAndComments });
     // Code adopted from https://stackoverflow.com/a/9229821/9999202
     const issueAndCommentsUniq = [...new Set(issueAndComments)];
-    console.log({ issueAndCommentsUniq });
 
     const reproValidator = new ReproValidator(user);
     const hasValidRepro = issueAndCommentsUniq.some((body) => {
@@ -68,6 +68,7 @@ async function run() {
         }
       }
 
+      console.log({ botComment });
       if (!botComment) return;
 
       await octokit.rest.issues.deleteComment({
