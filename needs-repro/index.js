@@ -39,8 +39,9 @@ async function run() {
     const botComment = comments.data.find((comment) => comment.body === needsReproResponse);
 
     const commentBodies = comments.data.map((comment) => comment.body);
+    const commentBodiesWithoutBot = commentBodies.filter((body) => body !== botComment.body);
 
-    const issueAndComments = [issueBody, ...commentBodies];
+    const issueAndComments = [issueBody, ...commentBodiesWithoutBot];
     console.log({ issueAndComments });
     // Code adopted from https://stackoverflow.com/a/9229821/9999202
     const issueAndCommentsUniq = [...new Set(issueAndComments)];
