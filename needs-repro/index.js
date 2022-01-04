@@ -1,7 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const ReproValidator = require('./ReproValidator');
-const DateComparator = require('./DateComparator');
+const isDateBefore = require('../common/isDateBefore');
 
 async function run() {
   try {
@@ -30,8 +30,7 @@ async function run() {
 
     // A comment is added/edited/deleted
     if (checkIssuesCreatedAfter && payload.comment) {
-      const dateComparator = new DateComparator();
-      if (dateComparator.isDateBefore(issueCreatedAt, checkIssuesCreatedAfter)) {
+      if (isDateBefore(issueCreatedAt, checkIssuesCreatedAfter)) {
         return;
       }
     }
