@@ -28,8 +28,8 @@ async function run() {
     const issue = await octokit.rest.issues.get(issueData);
     const { body: issueBody, created_at: issueCreatedAt } = issue.data;
 
-    if (checkIssuesCreatedAfter) {
-      // Don't triage issues older than the stated date
+    // A comment is added/edited/deleted
+    if (checkIssuesCreatedAfter && payload.comment) {
       const dateComparator = new DateComparator();
       if (dateComparator.isDateBefore(issueCreatedAt, checkIssuesCreatedAfter)) {
         return;
