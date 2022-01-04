@@ -73,6 +73,10 @@ inputs:
   needs-repro-response:
     description: GitHub Actions response when no reproduction provided
     required: true
+
+  check-issues-only-created-after:
+    description: Creation date of the issues from which bot starts to reply. Bot won't tinker with issues older than the stated date with format - YYYY-MM-DD
+    required: false
 ```
 
 ### platforms

@@ -1,6 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const ReproValidator = require('./ReproValidator');
+const DateComparator = require('./DateComparator');
 
 async function run() {
   try {
@@ -8,6 +9,7 @@ async function run() {
     const needsReproLabel = core.getInput('needs-repro-label');
     const reproProvidedLabel = core.getInput('repro-provided-label');
     const needsReproResponse = core.getInput('needs-repro-response');
+    const checkIssuesCreatedAfter = core.getInput('check-issues-only-created-after');
 
     const octokit = github.getOctokit(githubToken);
 
@@ -24,7 +26,15 @@ async function run() {
     const user = payload.sender.login;
 
     const issue = await octokit.rest.issues.get(issueData);
-    const { body: issueBody } = issue.data;
+    const { body: issueBody, created_at: issueCreatedAt } = issue.data;
+
+    if (checkIssuesCreatedAfter) {
+      // Don't triage issues older than the stated date
+      const dateComparator = new DateComparator();
+      if (dateComparator.isDateBefore(issueCreatedAt, checkIssuesCreatedAfter)) {
+        return;
+      }
+    }
 
     const comments = await octokit.rest.issues.listComments(issueData);
     const botComment = comments.data.find((comment) => comment.body === needsReproResponse);
