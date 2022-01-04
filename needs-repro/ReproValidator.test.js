@@ -60,6 +60,34 @@ describe('ReproValidator', () => {
 
       expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(true);
     });
+
+    it('should return false when empty snack is provided', () => {
+      const issueBody = `https://snack.expo.dev/`;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(false);
+    });
+
+    it('should return true when only snack and nothing else is provided', () => {
+      const issueBody = `https://snack.expo.dev/@kacperkapusciak/example`;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(true);
+    });
+
+    it('should return true when only repo and nothing else is provided', () => {
+      const issueBody = `https://github.com/kacperkapusciak/react-native-repro/`;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(true);
+    });
+
+    it('should return true when real life example repo is provided', () => {
+      const issueBody = `This is my repro for this issue: https://github.com/kacperkapusciak/react-native-repro/`;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(true);
+    });
   });
 
   describe('_hasFunctions', () => {
@@ -737,6 +765,13 @@ describe('ReproValidator', () => {
       )
       \`\`\`
       `;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator.isReproValid(issueBody)).toBe(true);
+    });
+
+    it('should return true when real life example repo comment is provided', () => {
+      const issueBody = `This is my repro for this issue: https://github.com/kacperkapusciak/react-native-repro`;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
       expect(reproValidator.isReproValid(issueBody)).toBe(true);

@@ -10,7 +10,7 @@ class ReproValidator {
 
     // Code adopted from https://github.com/react-navigation/react-navigation/blob/main/.github/workflows/check-repro.yml#L22
     const regexp = new RegExp(
-      `https?:\\/\\/((github\\.com\\/${this.user}\\/[^/]+\\/?[\\s\\n]+)|(snack\\.expo\\.dev\\/.+))`,
+      `https?:\\/\\/((github\\.com\\/${this.user}\\/[^/]+\\/?\\s?)|(snack\\.expo\\.dev\\/([^\\s]+)\\/([^\\s]+)))`,
       'gm'
     );
     return normalizedBody.search(regexp) !== -1;
