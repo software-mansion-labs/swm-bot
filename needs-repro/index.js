@@ -23,7 +23,7 @@ async function run() {
 
     const user = payload.sender.login;
     // Code adopted from https://docs.github.com/en/rest/reference/issues#get-an-issue
-    const issue = await octokit.request(
+    const { data: issue } = await octokit.request(
       'GET /repos/{owner}/{repo}/issues/{issue_number}',
       issueData
     );
