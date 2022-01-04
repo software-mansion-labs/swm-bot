@@ -21,8 +21,9 @@ async function run() {
 
     const { payload } = context;
 
-    const body = payload.comment ? payload.comment.body : payload.issue.body;
     const user = payload.sender.login;
+    const issue = await octokit.rest.issues.get(issueData);
+    const { body } = issue;
 
     const comments = await octokit.rest.issues.listComments(issueData);
     const commentBodies = comments.data.map((comment) => comment.body);
