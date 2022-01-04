@@ -22,7 +22,10 @@ async function run() {
     const { payload } = context;
 
     const user = payload.sender.login;
-    const issue = await octokit.rest.issues.getComment(issueData);
+    const issue = await octokit.request(
+      'GET /repos/{owner}/{repo}/issues/{issue_number}',
+      issueData
+    );
     const { body } = issue;
 
     const comments = await octokit.rest.issues.listComments(issueData);
