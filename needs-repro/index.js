@@ -26,17 +26,21 @@ async function run() {
 
     const comments = await octokit.rest.issues.listComments(issueData);
     const commentBodies = comments.data.map((comment) => comment.body);
+    console.log('commentBodies', commentBodies);
     const botComment = commentBodies.find((body) => body === needsReproResponse);
 
     const issueAndComments = [body, ...commentBodies];
+    console.log({ issueAndComments });
     // Code adopted from https://stackoverflow.com/a/9229821/9999202
     const issueAndCommentsUniq = [...new Set(issueAndComments)];
+    console.log({ issueAndCommentsUniq });
 
     const reproValidator = new ReproValidator(user);
     const hasValidRepro = issueAndCommentsUniq.some((body) => {
       // ONCE TOLD ME
       return reproValidator.isReproValid(body);
     });
+    console.log({ hasValidRepro });
 
     // Code adopted from https://github.com/react-navigation/react-navigation/blob/main/.github/workflows/check-repro.yml
     if (hasValidRepro) {
