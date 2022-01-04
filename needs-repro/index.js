@@ -45,18 +45,14 @@ async function run() {
     }
 
     const issueAndComments = [issueBody, ...commentBodies];
-    console.log({ issueAndComments });
     // Code adopted from https://stackoverflow.com/a/9229821/9999202
     const issueAndCommentsUniq = [...new Set(issueAndComments)];
 
     const reproValidator = new ReproValidator(user);
     const hasValidRepro = issueAndCommentsUniq.some((body) => {
       // ONCE TOLD ME
-      console.log(body, 'isValid: ', reproValidator.isReproValid(body));
       return reproValidator.isReproValid(body);
     });
-
-    console.log({ hasValidRepro });
 
     // Code adopted from https://github.com/react-navigation/react-navigation/blob/main/.github/workflows/check-repro.yml
     if (hasValidRepro) {
