@@ -22,10 +22,14 @@ async function run() {
     const { payload } = context;
 
     const user = payload.sender.login;
+    // Code adopted from https://docs.github.com/en/rest/reference/issues#get-an-issue
     const issue = await octokit.request(
       'GET /repos/{owner}/{repo}/issues/{issue_number}',
       issueData
     );
+
+    console.log(issue);
+
     const { body } = issue;
 
     const comments = await octokit.rest.issues.listComments(issueData);
