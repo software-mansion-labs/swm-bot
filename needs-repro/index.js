@@ -27,7 +27,7 @@ async function run() {
     const { body: issueBody } = issue.data;
 
     const comments = await octokit.rest.issues.listComments(issueData);
-    const botComment = comments.find((comment) => comment.body === needsReproResponse);
+    const botComment = comments.data.find((comment) => comment.body === needsReproResponse);
 
     const commentBodies = comments.data.map((comment) => comment.body);
 
