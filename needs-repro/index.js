@@ -22,24 +22,16 @@ async function run() {
     const { payload } = context;
 
     const user = payload.sender.login;
-    // Code adopted from https://docs.github.com/en/rest/reference/issues#get-an-issue
-    // const { data: issue } = await octokit.request(
-    //   'GET /repos/{owner}/{repo}/issues/{issue_number}',
-    //   issueData
-    // );
 
     const issue = await octokit.rest.issues.get(issueData);
-
-    console.log(issue);
-
-    const { body } = issue;
+    const { body: issueBody } = issue.data;
 
     const comments = await octokit.rest.issues.listComments(issueData);
+    const botComment = comments.find((comment) => comment.body === needsReproResponse);
+
     const commentBodies = comments.data.map((comment) => comment.body);
 
-    const botComment = commentBodies.find((body) => body === needsReproResponse);
-
-    const issueAndComments = [body, ...commentBodies];
+    const issueAndComments = [issueBody, ...commentBodies];
     // Code adopted from https://stackoverflow.com/a/9229821/9999202
     const issueAndCommentsUniq = [...new Set(issueAndComments)];
 
@@ -48,7 +40,6 @@ async function run() {
       // ONCE TOLD ME
       return reproValidator.isReproValid(body);
     });
-    console.log({ hasValidRepro });
 
     // Code adopted from https://github.com/react-navigation/react-navigation/blob/main/.github/workflows/check-repro.yml
     if (hasValidRepro) {
@@ -68,7 +59,6 @@ async function run() {
         }
       }
 
-      console.log({ botComment });
       if (!botComment) return;
 
       await octokit.rest.issues.deleteComment({
