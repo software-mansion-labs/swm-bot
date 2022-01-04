@@ -38,10 +38,13 @@ async function run() {
     const comments = await octokit.rest.issues.listComments(issueData);
     const botComment = comments.data.find((comment) => comment.body === needsReproResponse);
 
-    const commentBodies = comments.data.map((comment) => comment.body);
-    const commentBodiesWithoutBot = commentBodies.filter((body) => body !== botComment.body);
+    let commentBodies = comments.data.map((comment) => comment.body);
 
-    const issueAndComments = [issueBody, ...commentBodiesWithoutBot];
+    if (botComment) {
+      commentBodies = commentBodies.filter((body) => body !== botComment.body);
+    }
+
+    const issueAndComments = [issueBody, ...commentBodies];
     console.log({ issueAndComments });
     // Code adopted from https://stackoverflow.com/a/9229821/9999202
     const issueAndCommentsUniq = [...new Set(issueAndComments)];
