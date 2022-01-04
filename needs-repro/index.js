@@ -22,7 +22,7 @@ async function run() {
     const { payload } = context;
 
     const user = payload.sender.login;
-    const issue = await octokit.rest.issues.get(issueData);
+    const issue = await octokit.rest.issues.getComment(issueData);
     const { body } = issue;
 
     const comments = await octokit.rest.issues.listComments(issueData);
