@@ -88,6 +88,13 @@ describe('ReproValidator', () => {
 
       expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(true);
     });
+
+    it('should return true when shortened snack is provided', () => {
+      const issueBody = `https://snack.expo.dev/k0EO4obZv`;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(true);
+    });
   });
 
   describe('_hasFunctions', () => {
