@@ -138,6 +138,88 @@ describe('PlatformSelector', () => {
 
       expect(platformSelector.selectLabelsToAdd()).toEqual(['🤖android', '🧭web']);
     });
+
+    it('should return correct labels when non standard check is used', () => {
+      const issueBody = `
+      - [✅] iOS
+      `;
+      const platformSelector = new PlatformSelector(
+        issueBody,
+        '{"Android": "🤖android", "iOS": "🍎iOS", "Web": "🧭web"}'
+      );
+
+      expect(platformSelector.selectLabelsToAdd()).toEqual(['🍎iOS']);
+    });
+
+    it('should return correct labels when non standard check is used', () => {
+      const issueBody = `
+      - [ ] Android
+      - [ yes] iOS
+      - [ ] Web
+      `;
+      const platformSelector = new PlatformSelector(
+        issueBody,
+        '{"Android": "🤖android", "iOS": "🍎iOS", "Web": "🧭web"}'
+      );
+
+      expect(platformSelector.selectLabelsToAdd()).toEqual(['🍎iOS']);
+    });
+
+    it('should return correct labels when some text is added after the platform', () => {
+      const issueBody = `
+      - [x] Android (I marked but I haven't tested, the problem should persist)
+      - [x] iOS
+      - [ ] Web      
+      `;
+      const platformSelector = new PlatformSelector(
+        issueBody,
+        '{"Android": "🤖android", "iOS": "🍎iOS", "Web": "🧭web"}'
+      );
+
+      expect(platformSelector.selectLabelsToAdd()).toEqual(['🤖android', '🍎iOS']);
+    });
+
+    it('should return correct labels when space is added between x character', () => {
+      const issueBody = `
+      - [ ] Android
+      - [ x ] iOS
+      - [ ] Web  
+      `;
+      const platformSelector = new PlatformSelector(
+        issueBody,
+        '{"Android": "🤖android", "iOS": "🍎iOS", "Web": "🧭web"}'
+      );
+
+      expect(platformSelector.selectLabelsToAdd()).toEqual(['🍎iOS']);
+    });
+
+    it('should return correct labels when when some text is added after the platform and capitalized character is used', () => {
+      const issueBody = `
+      - [ ] Android (not sure)
+      - [X] iOS
+      - [ ] Web (not sure)
+      `;
+      const platformSelector = new PlatformSelector(
+        issueBody,
+        '{"Android": "🤖android", "iOS": "🍎iOS", "Web": "🧭web"}'
+      );
+
+      expect(platformSelector.selectLabelsToAdd()).toEqual(['🍎iOS']);
+    });
+
+    it('should return correct labels when checkbox is missing a space', () => {
+      const issueBody = `
+      - [] Android
+      - [x] iOS
+      - [ ] Web
+      `;
+      const platformSelector = new PlatformSelector(
+        issueBody,
+        '{"Android": "🤖android", "iOS": "🍎iOS", "Web": "🧭web"}'
+      );
+
+      expect(platformSelector.selectLabelsToAdd()).toEqual(['🍎iOS']);
+    });
   });
 
   describe('selectLabelsToRemove', () => {
@@ -262,6 +344,20 @@ describe('PlatformSelector', () => {
       );
 
       expect(platformSelector.selectLabelsToRemove()).toEqual(['🍎iOS']);
+    });
+
+    it('should return correct labels when checkbox is missing a space', () => {
+      const issueBody = `
+      - [] Android
+      - [x] iOS
+      - [ ] Web
+      `;
+      const platformSelector = new PlatformSelector(
+        issueBody,
+        '{"Android": "🤖android", "iOS": "🍎iOS", "Web": "🧭web"}'
+      );
+
+      expect(platformSelector.selectLabelsToRemove()).toEqual(['🤖android', '🧭web']);
     });
   });
 });
