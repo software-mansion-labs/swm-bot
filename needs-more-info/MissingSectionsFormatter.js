@@ -3,8 +3,8 @@ class MissingSectionsFormatter {
     if (!invalidSections.length) return response;
 
     const manySections = invalidSections.length > 1;
-    const beginning = `It seems like${manySections ? ' sections' : ''}`;
-    const ending = `${manySections ? 'are' : 'section is'} missing.`;
+    const beginning = `Please complete`;
+    const ending = `section${manySections ? 's' : ''}.`;
 
     if (manySections) {
       const invalidSectionsCopy = [...invalidSections];

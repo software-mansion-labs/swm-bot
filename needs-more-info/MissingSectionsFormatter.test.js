@@ -24,11 +24,11 @@ describe('MissingSectionsFormatter', () => {
           'Reproduction',
         ])
       ).toBe(
-        'Hey!\n\nIt seems like sections **Description**, **Steps To Reproduce** and **Reproduction** are missing.'
+        'Hey!\n\nPlease complete **Description**, **Steps To Reproduce** and **Reproduction** sections.'
       );
 
       expect(missingSectionsFormatter.format('Hey!', ['Description', 'Steps To Reproduce'])).toBe(
-        'Hey!\n\nIt seems like sections **Description** and **Steps To Reproduce** are missing.'
+        'Hey!\n\nPlease complete **Description** and **Steps To Reproduce** sections.'
       );
     });
 
@@ -36,7 +36,7 @@ describe('MissingSectionsFormatter', () => {
       const missingSectionsFormatter = new MissingSectionsFormatter();
 
       expect(missingSectionsFormatter.format('Hey!', ['Description'])).toBe(
-        'Hey!\n\nIt seems like **Description** section is missing.'
+        'Hey!\n\nPlease complete **Description** section.'
       );
     });
 
