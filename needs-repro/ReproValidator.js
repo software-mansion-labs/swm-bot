@@ -25,24 +25,29 @@ class ReproValidator {
 
     // Assign arbitray threshold eg. 50%
     const CERTAINTY_THRESHOLD = 0.5;
-    const WEIGHT_PER_TEST = 0.2;
+    const WEIGHT = 0.2;
 
-    const safeTestConditions = [
+    const testConditions = [
       this._hasFunctions(normalizedBody),
       this._hasVariables(normalizedBody),
-      this._hasImports(normalizedBody),
-      this._hasExports(normalizedBody),
       this._hasJSX(normalizedBody),
     ];
 
-    certainty += safeTestConditions.filter(Boolean).length / safeTestConditions.length;
+    certainty += WEIGHT * testConditions.filter(Boolean).length;
+
+    const strongTestConditions = [
+      this._hasImports(normalizedBody),
+      this._hasExports(normalizedBody),
+    ];
+
+    certainty += WEIGHT * strongTestConditions.filter(Boolean).length * 1.2;
 
     if (this._hasBackticks(normalizedBody)) {
-      certainty += WEIGHT_PER_TEST / 2;
+      certainty += WEIGHT * 0.5;
     }
 
     if (this._hasMethodInvocations(normalizedBody) && !this._hasAndroidStackTrace(normalizedBody)) {
-      certainty += WEIGHT_PER_TEST;
+      certainty += WEIGHT;
     }
 
     return certainty >= CERTAINTY_THRESHOLD;

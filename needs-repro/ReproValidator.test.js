@@ -811,6 +811,16 @@ describe('ReproValidator', () => {
 
       expect(reproValidator._hasJavaScriptOrTypeScriptCode(issueBody)).toBe(false);
     });
+
+    it('should return false for real reproduction from react-native-screens', () => {
+      const issueBody = `
+      import React from "react";
+      export default App;
+    `;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasJavaScriptOrTypeScriptCode(issueBody)).toBe(false);
+    });
   });
 
   describe('isReproValid', () => {
@@ -1093,6 +1103,23 @@ describe('ReproValidator', () => {
       const reproValidator = new ReproValidator('kacperkapusciak');
 
       expect(reproValidator.isReproValid(issueBody)).toBe(false);
+    });
+
+    it('should return true when real life example reproduction is provided', () => {
+      const issueBody = `
+      ## Snack or minimal code example
+
+      \`\`\`
+      {showView && <Animated.View
+             style={[styles.ball, animatedStyles]}
+             entering={FadeIn.duration(2000).springify().mass(0.3)}
+             exiting={FadeOut.duration(2000).springify().mass(0.3)}
+      />}
+      \`\`\`
+      `;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator.isReproValid(issueBody)).toBe(true);
     });
   });
 });
