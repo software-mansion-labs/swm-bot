@@ -19,23 +19,37 @@ class ReproValidator {
   // Heuristic way to guess with some confidence that a snippet has some JS/TS code
   _hasJavaScriptOrTypeScriptCode(body) {
     const normalizedBody = normalizeIssue(body || '');
-    // This method is splitted into separate methods for easier testing
-    const testConditions = [
+
+    // Start with 0 certainty that is is a JS/TS repro
+    let certainty = 0;
+
+    // Assign arbitray threshold eg. 50%
+    const CERTAINTY_THRESHOLD = 0.5;
+    const WEIGHT_PER_TEST = 0.2;
+
+    const safeTestConditions = [
       this._hasFunctions(normalizedBody),
       this._hasVariables(normalizedBody),
-      this._hasBackticks(normalizedBody),
       this._hasImports(normalizedBody),
       this._hasExports(normalizedBody),
       this._hasJSX(normalizedBody),
     ];
-    // Code adopted from https://stackoverflow.com/a/42317235/9999202
-    const percentOfConditionsMet = testConditions.filter(Boolean).length / testConditions.length;
 
-    return percentOfConditionsMet >= 0.5;
+    certainty += safeTestConditions.filter(Boolean).length / safeTestConditions.length;
+
+    if (this._hasBackticks(normalizedBody)) {
+      certainty += WEIGHT_PER_TEST / 2;
+    }
+
+    if (this._hasMethodInvocations(normalizedBody) && !this._hasAndroidStackTrace(normalizedBody)) {
+      certainty += WEIGHT_PER_TEST;
+    }
+
+    return certainty >= CERTAINTY_THRESHOLD;
   }
 
   _hasFunctions(body) {
-    const functionsRegex = /(function\s.*\(.*\)\s?{.*)|(\w+\(.*\))|(\)\s?=>\s?)/gm;
+    const functionsRegex = /(function\s.*\(.*\)\s?{.*)|(\)\s?=>\s?)/gm;
     return (body || '').search(functionsRegex) !== -1;
   }
 
@@ -62,6 +76,18 @@ class ReproValidator {
   _hasJSX(body) {
     const jsxRegex = /(<\w+)|(<\/\w+>)/gm;
     return (body || '').search(jsxRegex) !== -1;
+  }
+
+  _hasMethodInvocations(body) {
+    const methodInvocationsRegex = /\.\w+\(/gm;
+    return (body || '').search(methodInvocationsRegex) !== -1;
+  }
+
+  // Android stack trace has Java code and triggers false-positive repro response
+  _hasAndroidStackTrace(body) {
+    const crashRegex =
+      /((android\.\w+)|(com\.facebook.\w+)|(com\.swmansion.\w+)|(java\.lang.\w+))/gm;
+    return (body || '').search(crashRegex) !== -1;
   }
 
   isReproValid(body) {

@@ -164,6 +164,27 @@ describe('ReproValidator', () => {
 
       expect(reproValidator._hasFunctions(issueBody)).toBe(false);
     });
+
+    it('should return false when Java stack trace is provided', () => {
+      const issueBody = `
+      SyntaxError: JSON Parse error: Unexpected end of input
+        at com.swmansion.reanimated.AndroidErrorHandler.raise(AndroidErrorHandler.java:6)
+        at com.swmansion.reanimated.Scheduler.triggerUI(Scheduler.java)
+        at com.swmansion.reanimated.Scheduler.access$100(Scheduler.java:9)
+        at com.swmansion.reanimated.Scheduler$1.run(Scheduler.java:21)
+        at android.os.Handler.handleCallback(Handler.java:873)
+        at android.os.Handler.dispatchMessage(Handler.java:99)
+        at com.facebook.react.bridge.queue.MessageQueueThreadHandler.dispatchMessage(MessageQueueThreadHandler.java:27)
+        at android.os.Looper.loop(Looper.java:216)
+        at android.app.ActivityThread.main(ActivityThread.java:7263)
+        at java.lang.reflect.Method.invoke(Method.java)
+        at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:494)
+        at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:975)
+      `;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasFunctions(issueBody)).toBe(false);
+    });
   });
 
   describe('_hasVariables', () => {
@@ -171,49 +192,49 @@ describe('ReproValidator', () => {
       const issueBody = `const Tab = createBottomTabNavigator();`;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasFunctions(issueBody)).toBe(true);
+      expect(reproValidator._hasVariables(issueBody)).toBe(true);
     });
 
     it('should return true when snippet has let variable', () => {
       const issueBody = `let Tab = createBottomTabNavigator();`;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasFunctions(issueBody)).toBe(true);
+      expect(reproValidator._hasVariables(issueBody)).toBe(true);
     });
 
     it('should return true when snippet has var variable', () => {
       const issueBody = `var Tab = createBottomTabNavigator();`;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasFunctions(issueBody)).toBe(true);
+      expect(reproValidator._hasVariables(issueBody)).toBe(true);
     });
 
     it('should return false when const/let/var is used in a sentence', () => {
       const issueBody = `This variable constantly lets us to do something.`;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasFunctions(issueBody)).toBe(false);
+      expect(reproValidator._hasVariables(issueBody)).toBe(false);
     });
 
     it('should return false when snippet is empty', () => {
       const issueBody = ``;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasFunctions(issueBody)).toBe(false);
+      expect(reproValidator._hasVariables(issueBody)).toBe(false);
     });
 
     it('should return false when snippet is null', () => {
       const issueBody = null;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasFunctions(issueBody)).toBe(false);
+      expect(reproValidator._hasVariables(issueBody)).toBe(false);
     });
 
     it('should return false when snippet is undefined', () => {
       const issueBody = undefined;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasFunctions(issueBody)).toBe(false);
+      expect(reproValidator._hasVariables(issueBody)).toBe(false);
     });
   });
 
@@ -395,6 +416,181 @@ describe('ReproValidator', () => {
     });
   });
 
+  describe('_hasMethodInvocations', () => {
+    it('should return true for simple example containing function invocation', () => {
+      const issueBody = `date1.getTime()`;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasMethodInvocations(issueBody)).toBe(true);
+    });
+
+    it('should return false for example without function invocation', () => {
+      const issueBody = `const x = 12;`;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasMethodInvocations(issueBody)).toBe(false);
+    });
+
+    it('should return true for more complex example containing function invocation', () => {
+      const issueBody = `date1.getTime()`;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasMethodInvocations(issueBody)).toBe(true);
+    });
+
+    it('should return true for real reproduction from react-native-reanimated', () => {
+      const issueBody = `{showView && <Animated.View style={[styles.ball, animatedStyles]} entering={FadeIn.duration(2000).springify().mass(0.3)} exiting={FadeOut.duration(2000).springify().mass(0.3)} />}`;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasMethodInvocations(issueBody)).toBe(true);
+    });
+
+    it('should return false when snippet is null', () => {
+      const issueBody = null;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasMethodInvocations(issueBody)).toBe(false);
+    });
+
+    it('should return false when snippet is undefined', () => {
+      const issueBody = undefined;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasMethodInvocations(issueBody)).toBe(false);
+    });
+
+    it('should return true with snippet with many method invocations', () => {
+      const issueBody = `
+        at android.os.MessageQueue.enqueueMessage(MessageQueue.java:584)         
+        at android.os.Handler.enqueueMessage(Handler.java:754)         
+        at android.os.Handler.sendMessageAtTime(Handler.java:703)         
+        at android.os.Handler.sendMessageDelayed(Handler.java:673)        
+        at android.os.Handler.post(Handler.java:403)         
+        at com.facebook.react.bridge.queue.MessageQueueThreadImpl.runOnQueue(MessageQueueThreadImpl.java:66)         
+        at com.facebook.react.bridge.ReactContext.runOnUiQueueThread(ReactContext.java:333)         
+        at com.swmansion.reanimated.Scheduler.scheduleOnUI(Scheduler.java:37)        
+        at com.swmansion.reanimated.NativeProxy$AnimationFrameCallback.onAnimationFrame(NativeProxy.java:-2)         
+        at com.swmansion.reanimated.NodesManager.onAnimationFrame(NodesManager.java:252)         
+        at com.swmansion.reanimated.NodesManager.access$000(NodesManager.java:65)         
+        at com.swmansion.reanimated.NodesManager$1.doFrameGuarded(NodesManager.java:153)         
+        at com.facebook.react.uimanager.GuardedFrameCallback.doFrame(GuardedFrameCallback.java:29)         
+        at com.facebook.react.modules.core.ReactChoreographer$ReactChoreographerDispatcher.doFrame(ReactChoreographer.java:175)         at com.facebook.react.modules.core.ChoreographerCompat$FrameCallback$1.doFrame(ChoreographerCompat.java:85)         
+        at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1029)         
+        at android.view.Choreographer.doCallbacks(Choreographer.java:854)         
+        at android.view.Choreographer.doFrame(Choreographer.java:785)         
+        at android.view.Choreographer$FrameDisplayEventReceiver.run(Choreographer.java:1016)         
+        at android.os.Handler.handleCallback(Handler.java:883)         
+        at android.os.Handler.dispatchMessage(Handler.java:100)         
+        at android.os.Looper.loop(Looper.java:224)         
+        at android.app.ActivityThread.main(ActivityThread.java:7562)         
+        at java.lang.reflect.Method.invoke(Method.java:-2)         
+        at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:539)         
+        at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:950)
+      `;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasMethodInvocations(issueBody)).toBe(true);
+    });
+
+    it('should return true for when issue has an Android crash with method invocations', () => {
+      const issueBody = `
+      Fatal Exception: java.lang.RuntimeException: JSON Parse error: Unexpected end of input
+
+      SyntaxError: JSON Parse error: Unexpected end of input
+             at com.swmansion.reanimated.AndroidErrorHandler.raise(AndroidErrorHandler.java:6)
+             at com.swmansion.reanimated.Scheduler.triggerUI(Scheduler.java)
+             at com.swmansion.reanimated.Scheduler.access$100(Scheduler.java:9)
+             at com.swmansion.reanimated.Scheduler$1.run(Scheduler.java:21)
+             at android.os.Handler.handleCallback(Handler.java:873)
+             at android.os.Handler.dispatchMessage(Handler.java:99)
+             at com.facebook.react.bridge.queue.MessageQueueThreadHandler.dispatchMessage(MessageQueueThreadHandler.java:27)
+             at android.os.Looper.loop(Looper.java:216)
+             at android.app.ActivityThread.main(ActivityThread.java:7263)
+             at java.lang.reflect.Method.invoke(Method.java)
+             at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:494)
+             at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:975)
+      `;
+
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasMethodInvocations(issueBody)).toBe(true);
+    });
+  });
+
+  describe('_hasAndroidStackTrace', () => {
+    it('should return true for when issue has an Android crash', () => {
+      const issueBody = `
+        ANR:  Input dispatching timed out (1699cb com.****/com.****.MainActivity (server) is not responding. Waited 5001ms for MotionEvent)         
+        at android.os.Handler.sendMessageAtTime(Handler.java:720)         
+        at android.os.Handler.sendMessageDelayed(Handler.java:697)         
+        at android.os.Handler.post(Handler.java:427)         
+        at com.facebook.react.bridge.queue.MessageQueueThreadImpl.runOnQueue(MessageQueueThreadImpl.java:66)         
+        at com.facebook.react.bridge.ReactContext.runOnUiQueueThread(ReactContext.java:333)         
+        at com.swmansion.reanimated.Scheduler.scheduleOnUI(Scheduler.java:37)        
+        at com.swmansion.reanimated.NativeProxy$AnimationFrameCallback.onAnimationFrame(NativeProxy.java:-2)         
+        at com.swmansion.reanimated.NodesManager.onAnimationFrame(NodesManager.java:252)         
+        at com.swmansion.reanimated.NodesManager.access$000(NodesManager.java:65)        
+        at com.swmansion.reanimated.NodesManager$1.doFrameGuarded(NodesManager.java:153)         
+        at com.facebook.react.uimanager.GuardedFrameCallback.doFrame(GuardedFrameCallback.java:29)         
+        at com.facebook.react.modules.core.ReactChoreographer$ReactChoreographerDispatcher.doFrame(ReactChoreographer.java:175)        
+        at com.facebook.react.modules.core.ChoreographerCompat$FrameCallback$1.doFrame(ChoreographerCompat.java:85)         
+        at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1350)         
+        at android.view.Choreographer.doCallbacks(Choreographer.java:1149)         
+        at android.view.Choreographer.doFrame(Choreographer.java:1040)         
+        at android.view.Choreographer$FrameDisplayEventReceiver.run(Choreographer.java:1333)         
+        at android.os.Handler.handleCallback(Handler.java:938)         
+        at android.os.Handler.dispatchMessage(Handler.java:99)         
+        at android.os.Looper.loop(Looper.java:233)        
+        at android.app.ActivityThread.main(ActivityThread.java:8068)         
+        at java.lang.reflect.Method.invoke(Method.java:-2)         
+        at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:631)        
+        at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:978)
+      `;
+
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasAndroidStackTrace(issueBody)).toBe(true);
+    });
+
+    it('should return true for when issue has an Android crash', () => {
+      const issueBody = `
+      Fatal Exception: java.lang.RuntimeException: JSON Parse error: Unexpected end of input
+
+      SyntaxError: JSON Parse error: Unexpected end of input
+             at com.swmansion.reanimated.AndroidErrorHandler.raise(AndroidErrorHandler.java:6)
+             at com.swmansion.reanimated.Scheduler.triggerUI(Scheduler.java)
+             at com.swmansion.reanimated.Scheduler.access$100(Scheduler.java:9)
+             at com.swmansion.reanimated.Scheduler$1.run(Scheduler.java:21)
+             at android.os.Handler.handleCallback(Handler.java:873)
+             at android.os.Handler.dispatchMessage(Handler.java:99)
+             at com.facebook.react.bridge.queue.MessageQueueThreadHandler.dispatchMessage(MessageQueueThreadHandler.java:27)
+             at android.os.Looper.loop(Looper.java:216)
+             at android.app.ActivityThread.main(ActivityThread.java:7263)
+             at java.lang.reflect.Method.invoke(Method.java)
+             at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:494)
+             at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:975)
+      `;
+
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasAndroidStackTrace(issueBody)).toBe(true);
+    });
+
+    it('should return false when snippet is null', () => {
+      const issueBody = null;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasAndroidStackTrace(issueBody)).toBe(false);
+    });
+
+    it('should return false when snippet is undefined', () => {
+      const issueBody = undefined;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasAndroidStackTrace(issueBody)).toBe(false);
+    });
+  });
+
   describe('_hasJavaScriptOrTypeScriptCode', () => {
     it('should return true for real reproduction from react-native-screens', () => {
       const issueBody = `
@@ -571,6 +767,35 @@ describe('ReproValidator', () => {
 
     it('should return false when snippet is undefined', () => {
       const issueBody = undefined;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasJavaScriptOrTypeScriptCode(issueBody)).toBe(false);
+    });
+
+    it('should return false when android crash is provided', () => {
+      const issueBody = `
+      Crashlytics screenshot below:
+      
+      \`\`\`
+      Fatal Exception: java.lang.RuntimeException: JSON Parse error: Unexpected end of input
+      
+      SyntaxError: JSON Parse error: Unexpected end of input
+             at com.swmansion.reanimated.AndroidErrorHandler.raise(AndroidErrorHandler.java:6)
+             at com.swmansion.reanimated.Scheduler.triggerUI(Scheduler.java)
+             at com.swmansion.reanimated.Scheduler.access$100(Scheduler.java:9)
+             at com.swmansion.reanimated.Scheduler$1.run(Scheduler.java:21)
+             at android.os.Handler.handleCallback(Handler.java:873)
+             at android.os.Handler.dispatchMessage(Handler.java:99)
+             at com.facebook.react.bridge.queue.MessageQueueThreadHandler.dispatchMessage(MessageQueueThreadHandler.java:27)
+             at android.os.Looper.loop(Looper.java:216)
+             at android.app.ActivityThread.main(ActivityThread.java:7263)
+             at java.lang.reflect.Method.invoke(Method.java)
+             at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:494)
+             at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:975)
+      \`\`\`
+      
+      <img width="444" alt="スクリーンショット 2022-01-11 16 11 06" src="https://user-images.githubusercontent.com/15521227/148897093-97e9cf59-9a9c-435b-a013-b69936cbb60d.png">
+      `;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
       expect(reproValidator._hasJavaScriptOrTypeScriptCode(issueBody)).toBe(false);
@@ -782,6 +1007,81 @@ describe('ReproValidator', () => {
       const reproValidator = new ReproValidator('kacperkapusciak');
 
       expect(reproValidator.isReproValid(issueBody)).toBe(true);
+    });
+
+    it('should return false when real life with crashes and no repro is provided', () => {
+      const issueBody = `
+        **ANR 1 :** 
+        \`\`\`ANR:  Input dispatching timed out (com.****/com.****.MainActivity, Waiting to send non-key event because the touched window has not finished processing certain input events that were delivered to it over 500.0ms ago.  Wait queue length: 8.  Wait queue head age: 9044.1ms.)         
+        at android.os.MessageQueue.enqueueMessage(MessageQueue.java:584)         
+        at android.os.Handler.enqueueMessage(Handler.java:754)         
+        at android.os.Handler.sendMessageAtTime(Handler.java:703)         
+        at android.os.Handler.sendMessageDelayed(Handler.java:673)        
+        at android.os.Handler.post(Handler.java:403)         
+        at com.facebook.react.bridge.queue.MessageQueueThreadImpl.runOnQueue(MessageQueueThreadImpl.java:66)         
+        at com.facebook.react.bridge.ReactContext.runOnUiQueueThread(ReactContext.java:333)         
+        at com.swmansion.reanimated.Scheduler.scheduleOnUI(Scheduler.java:37)        
+        at com.swmansion.reanimated.NativeProxy$AnimationFrameCallback.onAnimationFrame(NativeProxy.java:-2)         
+        at com.swmansion.reanimated.NodesManager.onAnimationFrame(NodesManager.java:252)         
+        at com.swmansion.reanimated.NodesManager.access$000(NodesManager.java:65)         
+        at com.swmansion.reanimated.NodesManager$1.doFrameGuarded(NodesManager.java:153)         
+        at com.facebook.react.uimanager.GuardedFrameCallback.doFrame(GuardedFrameCallback.java:29)         
+        at com.facebook.react.modules.core.ReactChoreographer$ReactChoreographerDispatcher.doFrame(ReactChoreographer.java:175)         at com.facebook.react.modules.core.ChoreographerCompat$FrameCallback$1.doFrame(ChoreographerCompat.java:85)         
+        at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1029)         
+        at android.view.Choreographer.doCallbacks(Choreographer.java:854)         
+        at android.view.Choreographer.doFrame(Choreographer.java:785)         
+        at android.view.Choreographer$FrameDisplayEventReceiver.run(Choreographer.java:1016)         
+        at android.os.Handler.handleCallback(Handler.java:883)         
+        at android.os.Handler.dispatchMessage(Handler.java:100)         
+        at android.os.Looper.loop(Looper.java:224)         
+        at android.app.ActivityThread.main(ActivityThread.java:7562)         
+        at java.lang.reflect.Method.invoke(Method.java:-2)         
+        at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:539)         
+        at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:950)
+        \`\`\`
+
+
+        **ANR 2** 
+        \`\`\`
+        ANR:  Input dispatching timed out (1699cb com.****/com.****.MainActivity (server) is not responding. Waited 5001ms for MotionEvent)         
+        at android.os.Handler.sendMessageAtTime(Handler.java:720)         
+        at android.os.Handler.sendMessageDelayed(Handler.java:697)         
+        at android.os.Handler.post(Handler.java:427)         
+        at com.facebook.react.bridge.queue.MessageQueueThreadImpl.runOnQueue(MessageQueueThreadImpl.java:66)         
+        at com.facebook.react.bridge.ReactContext.runOnUiQueueThread(ReactContext.java:333)         
+        at com.swmansion.reanimated.Scheduler.scheduleOnUI(Scheduler.java:37)        
+        at com.swmansion.reanimated.NativeProxy$AnimationFrameCallback.onAnimationFrame(NativeProxy.java:-2)         
+        at com.swmansion.reanimated.NodesManager.onAnimationFrame(NodesManager.java:252)         
+        at com.swmansion.reanimated.NodesManager.access$000(NodesManager.java:65)        
+        at com.swmansion.reanimated.NodesManager$1.doFrameGuarded(NodesManager.java:153)         
+        at com.facebook.react.uimanager.GuardedFrameCallback.doFrame(GuardedFrameCallback.java:29)         
+        at com.facebook.react.modules.core.ReactChoreographer$ReactChoreographerDispatcher.doFrame(ReactChoreographer.java:175)        
+        at com.facebook.react.modules.core.ChoreographerCompat$FrameCallback$1.doFrame(ChoreographerCompat.java:85)         
+        at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1350)         
+        at android.view.Choreographer.doCallbacks(Choreographer.java:1149)         
+        at android.view.Choreographer.doFrame(Choreographer.java:1040)         
+        at android.view.Choreographer$FrameDisplayEventReceiver.run(Choreographer.java:1333)         
+        at android.os.Handler.handleCallback(Handler.java:938)         
+        at android.os.Handler.dispatchMessage(Handler.java:99)         
+        at android.os.Looper.loop(Looper.java:233)        
+        at android.app.ActivityThread.main(ActivityThread.java:8068)         
+        at java.lang.reflect.Method.invoke(Method.java:-2)         
+        at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:631)        
+        at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:978)
+        \`\`\`
+
+        ### Expected behavior
+        App shouldn't crash.
+
+        ### Actual behavior & steps to reproduce
+        Whenever we scroll on a particular screen, the app crashes after sometime.
+        Solutions we've tried so far : 
+        1. Upgrading reanimated from 2.2.2 to 2.3.1. This just created this issue : https://github.com/software-mansion/react-native-reanimated/issues/2702. Despite trying all the steps provided in the linked issue, the issue still persisted.
+        2. Upgrading reanimated to 2.2.4. That is when we saw the above ANR.
+      `;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator.isReproValid(issueBody)).toBe(false);
     });
   });
 });
