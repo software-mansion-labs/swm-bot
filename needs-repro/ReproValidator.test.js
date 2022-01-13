@@ -165,6 +165,13 @@ describe('ReproValidator', () => {
 
       expect(reproValidator._hasRepo(issueBody)).toBe(true);
     });
+
+    it('should return true when repo is provided in a url', () => {
+      const issueBody = `[github.com/kacperkapusciak/amazing-repo](https://github.com/kacperkapusciak/amazing-repo)`;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasRepo(issueBody)).toBe(true);
+    });
   });
 
   describe('_hasFunctions', () => {
