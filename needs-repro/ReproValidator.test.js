@@ -95,6 +95,17 @@ describe('ReproValidator', () => {
 
       expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(true);
     });
+
+    it('should return false when a link to an empty snack is provided', () => {
+      const issueBody = `
+      The issue doesn't seem to contain a [minimal reproduction](https://stackoverflow.com/help/minimal-reproducible-example).
+
+      Could you provide a snippet of code, a [snack](https://snack.expo.dev/) or a link to a GitHub repository that reproduces the problem?
+      `;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(false);
+    });
   });
 
   describe('_hasFunctions', () => {
