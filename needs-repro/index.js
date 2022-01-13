@@ -23,10 +23,11 @@ async function run() {
 
     const { payload } = context;
 
-    const user = payload.sender.login;
-
     const issue = await octokit.rest.issues.get(issueData);
-    const { body: issueBody, created_at: issueCreatedAt } = issue.data;
+    const { body: issueBody, created_at: issueCreatedAt, user } = issue.data;
+
+    const author = user.login;
+    const commenter = payload.comment ? payload.sender.login : '';
 
     // A comment is added/edited/deleted
     if (checkIssuesCreatedAfter && payload.comment) {
@@ -48,7 +49,7 @@ async function run() {
     // Code adopted from https://stackoverflow.com/a/9229821/9999202
     const issueAndCommentsUniq = [...new Set(issueAndComments)];
 
-    const reproValidator = new ReproValidator(user);
+    const reproValidator = new ReproValidator(author, commenter);
     const hasValidRepro = issueAndCommentsUniq.some((body) => {
       // ONCE TOLD ME
       return reproValidator.isReproValid(body);

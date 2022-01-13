@@ -1,23 +1,30 @@
 const normalizeIssue = require('../common/normalizeIssue');
 
 class ReproValidator {
-  constructor(user) {
-    this.user = user;
+  constructor(author, commenter) {
+    this.author = author;
+    this.commenter = commenter;
   }
 
-  _hasSnackOrRepo(body) {
+  // Code adopted from https://github.com/react-navigation/react-navigation/blob/main/.github/workflows/check-repro.yml#L22
+  _hasRepo(body) {
     const normalizedBody = normalizeIssue(body || '');
-
-    // Code adopted from https://github.com/react-navigation/react-navigation/blob/main/.github/workflows/check-repro.yml#L22
     const regexp = new RegExp(
-      `https?:\\/\\/((github\\.com\\/${this.user}\\/[^/]+\\/?\\s?)|(snack\\.expo\\.dev\\/([^\\s\\)\\]]+)))`,
+      `https?:\\/\\/github\\.com\\/(${this.author}|${this.commenter})\\/[^/]+\\/?\\s?`,
       'gm'
     );
     return normalizedBody.search(regexp) !== -1;
   }
 
+  // Code adopted from https://github.com/react-navigation/react-navigation/blob/main/.github/workflows/check-repro.yml#L22
+  _hasSnack(body) {
+    const normalizedBody = normalizeIssue(body || '');
+    const regexp = /https?:\/\/snack\.expo\.dev\/[^\s)\]]+/gm;
+    return normalizedBody.search(regexp) !== -1;
+  }
+
   // Heuristic way to guess with some confidence that a snippet has some JS/TS code
-  _hasJavaScriptOrTypeScriptCode(body) {
+  _hasCodeSnippet(body) {
     const normalizedBody = normalizeIssue(body || '');
 
     // Start with 0 certainty that is is a JS/TS repro
@@ -96,7 +103,7 @@ class ReproValidator {
   }
 
   isReproValid(body) {
-    return this._hasJavaScriptOrTypeScriptCode(body) || this._hasSnackOrRepo(body);
+    return this._hasCodeSnippet(body) || this._hasSnack(body) || this._hasRepo(body);
   }
 }
 

@@ -1,33 +1,33 @@
 const ReproValidator = require('./ReproValidator');
 
 describe('ReproValidator', () => {
-  describe('_hasSnackOrRepo', () => {
+  describe('_hasSnack', () => {
     it('should return false when issue body is empty', () => {
       const issueBody = ``;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(false);
+      expect(reproValidator._hasSnack(issueBody)).toBe(false);
     });
 
     it('should return false when issue body is null', () => {
       const issueBody = null;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(false);
+      expect(reproValidator._hasSnack(issueBody)).toBe(false);
     });
 
     it('should return false when issue body is undefined', () => {
       const issueBody = undefined;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(false);
+      expect(reproValidator._hasSnack(issueBody)).toBe(false);
     });
 
     it('should return false when no snack or repo', () => {
       const issueBody = `## Reproduction`;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(false);
+      expect(reproValidator._hasSnack(issueBody)).toBe(false);
     });
 
     it('should return true when snack provided', () => {
@@ -37,17 +37,7 @@ describe('ReproValidator', () => {
       `;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(true);
-    });
-
-    it('should return true when repo provided', () => {
-      const issueBody = `
-      ## Reproduction
-      https://github.com/kacperkapusciak/my-amazing-repro
-    `;
-      const reproValidator = new ReproValidator('kacperkapusciak');
-
-      expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(true);
+      expect(reproValidator._hasSnack(issueBody)).toBe(true);
     });
 
     it('should return true when both repo and snack provided', () => {
@@ -58,42 +48,28 @@ describe('ReproValidator', () => {
     `;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(true);
+      expect(reproValidator._hasSnack(issueBody)).toBe(true);
     });
 
     it('should return false when empty snack is provided', () => {
       const issueBody = `https://snack.expo.dev/`;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(false);
+      expect(reproValidator._hasSnack(issueBody)).toBe(false);
     });
 
     it('should return true when only snack and nothing else is provided', () => {
       const issueBody = `https://snack.expo.dev/@kacperkapusciak/example`;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(true);
-    });
-
-    it('should return true when only repo and nothing else is provided', () => {
-      const issueBody = `https://github.com/kacperkapusciak/react-native-repro/`;
-      const reproValidator = new ReproValidator('kacperkapusciak');
-
-      expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(true);
-    });
-
-    it('should return true when real life example repo is provided', () => {
-      const issueBody = `This is my repro for this issue: https://github.com/kacperkapusciak/react-native-repro/`;
-      const reproValidator = new ReproValidator('kacperkapusciak');
-
-      expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(true);
+      expect(reproValidator._hasSnack(issueBody)).toBe(true);
     });
 
     it('should return true when shortened snack is provided', () => {
       const issueBody = `https://snack.expo.dev/k0EO4obZv`;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(true);
+      expect(reproValidator._hasSnack(issueBody)).toBe(true);
     });
 
     it('should return false when a link to an empty snack is provided', () => {
@@ -104,7 +80,90 @@ describe('ReproValidator', () => {
       `;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasSnackOrRepo(issueBody)).toBe(false);
+      expect(reproValidator._hasSnack(issueBody)).toBe(false);
+    });
+  });
+
+  describe('_hasRepo', () => {
+    it('should return false when issue body is empty', () => {
+      const issueBody = ``;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasRepo(issueBody)).toBe(false);
+    });
+
+    it('should return false when issue body is null', () => {
+      const issueBody = null;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasRepo(issueBody)).toBe(false);
+    });
+
+    it('should return false when issue body is undefined', () => {
+      const issueBody = undefined;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasRepo(issueBody)).toBe(false);
+    });
+
+    it('should return false when no repo', () => {
+      const issueBody = `## Reproduction`;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasRepo(issueBody)).toBe(false);
+    });
+
+    it('should return true when repo provided', () => {
+      const issueBody = `
+      ## Reproduction
+      https://github.com/kacperkapusciak/my-amazing-repro
+    `;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasRepo(issueBody)).toBe(true);
+    });
+
+    it('should return true when repo is provided in a comment', () => {
+      const issueBody = `
+      https://github.com/someone/my-amazing-repro
+    `;
+      const reproValidator = new ReproValidator('kacperkapusciak', 'someone');
+
+      expect(reproValidator._hasRepo(issueBody)).toBe(true);
+    });
+
+    it("should return false when provided github link isn't a repo created by issue author or commenter", () => {
+      const issueBody = `
+      https://github.com/software-mansion/great-library
+    `;
+      const reproValidator = new ReproValidator('kacperkapusciak', 'someone');
+
+      expect(reproValidator._hasRepo(issueBody)).toBe(false);
+    });
+
+    it('should return true when both repo and snack provided', () => {
+      const issueBody = `
+      ## Reproduction
+      https://snack.expo.dev/@kacperkapusciak/example
+      https://github.com/kacperkapusciak/my-amazing-repro
+    `;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasRepo(issueBody)).toBe(true);
+    });
+
+    it('should return true when only repo and nothing else is provided', () => {
+      const issueBody = `https://github.com/kacperkapusciak/react-native-repro/`;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasRepo(issueBody)).toBe(true);
+    });
+
+    it('should return true when real life example repo is provided', () => {
+      const issueBody = `This is my repro for this issue: https://github.com/kacperkapusciak/react-native-repro/`;
+      const reproValidator = new ReproValidator('kacperkapusciak');
+
+      expect(reproValidator._hasRepo(issueBody)).toBe(true);
     });
   });
 
@@ -602,7 +661,7 @@ describe('ReproValidator', () => {
     });
   });
 
-  describe('_hasJavaScriptOrTypeScriptCode', () => {
+  describe('_hasCodeSnippet', () => {
     it('should return true for real reproduction from react-native-screens', () => {
       const issueBody = `
       import React from "react";
@@ -636,7 +695,7 @@ describe('ReproValidator', () => {
     `;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasJavaScriptOrTypeScriptCode(issueBody)).toBe(true);
+      expect(reproValidator._hasCodeSnippet(issueBody)).toBe(true);
     });
 
     it('should return true for real reproduction from react-native-reanimated', () => {
@@ -705,7 +764,7 @@ describe('ReproValidator', () => {
     `;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasJavaScriptOrTypeScriptCode(issueBody)).toBe(true);
+      expect(reproValidator._hasCodeSnippet(issueBody)).toBe(true);
     });
 
     it('should return true for another real reproduction from react-native-reanimated', () => {
@@ -723,7 +782,7 @@ describe('ReproValidator', () => {
       `;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasJavaScriptOrTypeScriptCode(issueBody)).toBe(true);
+      expect(reproValidator._hasCodeSnippet(issueBody)).toBe(true);
     });
 
     it('should return true for real reproduction from react-native-gesture-handler', () => {
@@ -745,7 +804,7 @@ describe('ReproValidator', () => {
       `;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasJavaScriptOrTypeScriptCode(issueBody)).toBe(true);
+      expect(reproValidator._hasCodeSnippet(issueBody)).toBe(true);
     });
 
     it('should return false when snippet has no JS/TS code', () => {
@@ -759,28 +818,28 @@ describe('ReproValidator', () => {
       `;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasJavaScriptOrTypeScriptCode(issueBody)).toBe(false);
+      expect(reproValidator._hasCodeSnippet(issueBody)).toBe(false);
     });
 
     it('should return false when snippet is empty', () => {
       const issueBody = ``;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasJavaScriptOrTypeScriptCode(issueBody)).toBe(false);
+      expect(reproValidator._hasCodeSnippet(issueBody)).toBe(false);
     });
 
     it('should return false when snippet is null', () => {
       const issueBody = null;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasJavaScriptOrTypeScriptCode(issueBody)).toBe(false);
+      expect(reproValidator._hasCodeSnippet(issueBody)).toBe(false);
     });
 
     it('should return false when snippet is undefined', () => {
       const issueBody = undefined;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasJavaScriptOrTypeScriptCode(issueBody)).toBe(false);
+      expect(reproValidator._hasCodeSnippet(issueBody)).toBe(false);
     });
 
     it('should return false when android crash is provided', () => {
@@ -809,7 +868,7 @@ describe('ReproValidator', () => {
       `;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasJavaScriptOrTypeScriptCode(issueBody)).toBe(false);
+      expect(reproValidator._hasCodeSnippet(issueBody)).toBe(false);
     });
 
     it('should return false for real reproduction from react-native-screens', () => {
@@ -819,7 +878,7 @@ describe('ReproValidator', () => {
     `;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator._hasJavaScriptOrTypeScriptCode(issueBody)).toBe(false);
+      expect(reproValidator._hasCodeSnippet(issueBody)).toBe(false);
     });
   });
 
