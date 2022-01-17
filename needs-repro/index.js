@@ -29,8 +29,6 @@ async function run() {
     const author = user.login;
     const commenter = payload.comment ? payload.sender.login : '';
 
-    console.log(payload.issue);
-
     // Don't check for repro on pull requests
     if (payload.issue.pull_request) {
       core.notice('Action triggered by a comment added on a pull request.');
