@@ -21,9 +21,9 @@ async function run() {
       issue_number: context.issue.number,
     };
 
-    const { payload, eventName } = context;
+    const { payload } = context;
 
-    console.log(eventName);
+    console.log(context);
 
     const issue = await octokit.rest.issues.get(issueData);
     const { body: issueBody, created_at: issueCreatedAt, user } = issue.data;
