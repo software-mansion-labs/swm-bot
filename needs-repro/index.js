@@ -23,17 +23,24 @@ async function run() {
 
     const { payload } = context;
 
-    console.log(context);
-
     const issue = await octokit.rest.issues.get(issueData);
     const { body: issueBody, created_at: issueCreatedAt, user } = issue.data;
 
     const author = user.login;
     const commenter = payload.comment ? payload.sender.login : '';
 
+    // Don't check for repro on pull requests
+    if (context.issue.pull_request) {
+      core.notice('Action triggered by a comment added on a pull request.');
+      return;
+    }
+
     // A comment is added/edited/deleted
     if (checkIssuesCreatedAfter && payload.comment) {
       if (isDateBefore(issueCreatedAt, checkIssuesCreatedAfter)) {
+        core.notice(
+          `Action triggered by a comment added on an issue older than ${checkIssuesCreatedAfter}.`
+        );
         return;
       }
     }
