@@ -21,7 +21,7 @@ async function run() {
     const { payload } = context;
 
     // Don't run on pull requests
-    if (payload.issue.pull_request) {
+    if (payload.issue?.pull_request) {
       core.notice('Action triggered by a comment added on a pull request.');
       return;
     }
@@ -30,6 +30,8 @@ async function run() {
 
     // Remove label when activity detected
     if (context.eventName === 'issues' || context.eventName === 'issue_comment') {
+      core.notice(`Issue has some activity - removing ${closeWhenStaleLabel} label.`);
+
       try {
         await octokit.rest.issues.removeLabel({
           ...issueData,
@@ -40,6 +42,8 @@ async function run() {
           throw error;
         }
       }
+
+      return;
     }
 
     // const issues = await octokit.rest.issues.list({
