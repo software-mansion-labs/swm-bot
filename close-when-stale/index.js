@@ -64,8 +64,9 @@ async function run() {
 
     const currentDate = new Date();
 
-    const issues = await octokit.rest.issues.list({
-      ...issueData,
+    const issues = await octokit.rest.issues.listForRepo({
+      owner: context.repo.owner,
+      repo: context.repo.repo,
       labels: [closeWhenStaleLabel],
       state: 'open',
     });
