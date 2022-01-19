@@ -12,8 +12,7 @@ inputs:
 
   days-to-close:
     description: How many days will have to pass without activity in order to close the issue
-    required: false
-    default: 21 # 3 weeks
+    required: true
 
   maintainer-team-name:
     description: Name of the team of maintainers in GitHub organization. Used to ignore comments made by maintainers.
