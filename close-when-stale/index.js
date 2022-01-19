@@ -41,7 +41,7 @@ async function run() {
 
       if (triggeredByMaintainer) {
         core.notice('Triggered by maintainer - do nothing');
-        return;
+        // return;
       }
 
       core.notice(`Issue has some activity - removing ${closeWhenStaleLabel} label.`);
