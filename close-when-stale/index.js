@@ -26,6 +26,8 @@ async function run() {
       return;
     }
 
+    console.log(context.eventName);
+
     // Remove label when activity detected
     if (context.eventName === 'issues' || context.eventName === 'issue_comment') {
       const maintainersData = await octokit.rest.teams.getByName({
@@ -68,13 +70,18 @@ async function run() {
       state: 'open',
     });
 
+    console.log(issues);
+
     issues.data.forEach(async (issue) => {
       const issueDate = new Date(issue.updated_at);
 
       const difference = issueDate.getTime() - currentDate.getTime();
       const differenceInDays = difference / (1000 * 3600 * 24);
 
+      console.log(differenceInDays);
+
       if (differenceInDays >= daysToClose) {
+        console.log('found issue to close: ', issue.number);
         // Could be done in bulk with Promise.all rather than in a loop tbh
         const { status } = await octokit.rest.issues.update({
           owner: context.repo.owner,
