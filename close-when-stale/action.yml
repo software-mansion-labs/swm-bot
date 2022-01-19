@@ -1,0 +1,24 @@
+name: Close when stale
+description: Closes the issue after the specified time if it has the specified label
+inputs:
+  github-token:
+    description: A GitHub token.
+    required: false
+    default: ${{ github.token }}
+
+  close-when-stale-label:
+    description: Label which indicates which issues are considered to be closed
+    required: true
+
+  days-to-close:
+    description: How many days will have to pass without activity in order to close the issue
+    required: false
+    default: 21 # 3 weeks
+
+  maintainer-team-name:
+    description: Name of the team of maintainers in GitHub organization. Used to ignore comments made by maintainers.
+    required: false
+
+runs:
+  using: node12
+  main: index.js
