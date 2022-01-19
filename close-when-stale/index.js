@@ -5,8 +5,8 @@ async function run() {
   try {
     const githubToken = core.getInput('github-token');
     const closeWhenStaleLabel = core.getInput('close-when-stale-label');
-    // const daysToClose = core.getInput('days-to-close');
-    // const maintainerTeamName = core.getInput('maintainer-team-name');
+    const daysToClose = core.getInput('days-to-close');
+    const maintainerTeamName = core.getInput('maintainer-team-name');
 
     const octokit = github.getOctokit(githubToken);
 
@@ -26,10 +26,24 @@ async function run() {
       return;
     }
 
-    console.log('sender: ', payload.sender.login);
-
     // Remove label when activity detected
     if (context.eventName === 'issues' || context.eventName === 'issue_comment') {
+      const maintainersData = await octokit.rest.teams.getByName({
+        org: context.repo.owner,
+        team_slug: maintainerTeamName,
+      });
+
+      const maintainers = maintainersData.data.map((maintainer) => maintainer.login);
+
+      const triggeredByMaintainer = !maintainers.some(
+        (maintainer) => maintainer === payload.sender.login
+      );
+
+      if (triggeredByMaintainer) {
+        core.notice('Triggered by maintainer - do nothing');
+        return;
+      }
+
       core.notice(`Issue has some activity - removing ${closeWhenStaleLabel} label.`);
 
       try {
@@ -46,26 +60,34 @@ async function run() {
       return;
     }
 
-    // const issues = await octokit.rest.issues.list({
-    //   ...issueData,
-    //   labels: [closeWhenStaleLabel],
-    //   state: 'open',
-    // });
+    const currentDate = new Date();
 
-    // const maintainersData = await octokit.rest.teams.getByName({
-    //   org: context.repo.owner,
-    //   team_slug: maintainerTeamName,
-    // });
+    const issues = await octokit.rest.issues.list({
+      ...issueData,
+      labels: [closeWhenStaleLabel],
+      state: 'open',
+    });
 
-    // const maintainers = maintainersData.data.map((maintainer) => maintainer.login);
+    issues.data.forEach(async (issue) => {
+      const issueDate = new Date(issue.updated_at);
 
-    const comments = await octokit.rest.issues.listComments(issueData);
-    const commentsWithoutBot = comments.data.filter((comment) => comment.user.type !== 'Bot');
+      const difference = issueDate.getTime() - currentDate.getTime();
+      const differenceInDays = difference / (1000 * 3600 * 24);
 
-    console.log(commentsWithoutBot);
-    // const commenthWithoutMaintainers = commentsWithoutBot.data.filter(
-    //   (comment) => !maintainers.some((maintainer) => maintainer === comment.user.login)
-    // );
+      if (differenceInDays >= daysToClose) {
+        // Could be done in bulk with Promise.all rather than in a loop tbh
+        const { status } = await octokit.rest.issues.update({
+          owner: context.repo.owner,
+          repo: context.repo.repo,
+          issue_number: issue.number,
+          state: 'closed',
+        });
+
+        if (status === 200) {
+          core.notice(`Closed issue ${issue.number}`);
+        }
+      }
+    });
   } catch (e) {
     core.error(e);
     core.setFailed(e.message);
