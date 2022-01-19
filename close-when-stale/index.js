@@ -79,7 +79,11 @@ async function run() {
       const difference = currentDate.getTime() - issueDate.getTime();
       const differenceInDays = difference / (1000 * 3600 * 24);
 
-      console.log(differenceInDays);
+      console.log({
+        differenceInDays,
+        daysToClose,
+        isGreaterOrEqual: differenceInDays >= daysToClose,
+      });
 
       if (differenceInDays >= daysToClose) {
         console.log('found issue to close: ', issue.number);
