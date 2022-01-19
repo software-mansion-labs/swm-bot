@@ -76,7 +76,7 @@ async function run() {
     issues.data.forEach(async (issue) => {
       const issueDate = new Date(issue.updated_at);
 
-      const difference = issueDate.getTime() - currentDate.getTime();
+      const difference = currentDate.getTime() - issueDate.getTime();
       const differenceInDays = difference / (1000 * 3600 * 24);
 
       console.log(differenceInDays);
