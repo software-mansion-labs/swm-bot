@@ -28,10 +28,13 @@ async function run() {
 
     // Remove label when activity detected
     if (context.eventName === 'issues' || context.eventName === 'issue_comment') {
+      console.log('fetching maintainers!');
       const maintainersData = await octokit.rest.teams.getByName({
         org: context.repo.owner,
         team_slug: maintainerTeamName,
       });
+
+      console.log('maintainers fetched!');
 
       const maintainers = maintainersData.data.map((maintainer) => maintainer.login);
 
