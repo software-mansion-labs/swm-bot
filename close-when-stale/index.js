@@ -6,7 +6,6 @@ async function run() {
     const githubToken = core.getInput('github-token');
     const closeWhenStaleLabel = core.getInput('close-when-stale-label');
     const daysToClose = core.getInput('days-to-close');
-    const maintainerTeamName = core.getInput('maintainer-team-name');
 
     const octokit = github.getOctokit(githubToken);
 
@@ -28,23 +27,15 @@ async function run() {
 
     // Remove label when activity detected
     if (context.eventName === 'issues' || context.eventName === 'issue_comment') {
-      console.log(context);
-      console.log('fetching maintainers!');
-      const maintainersData = await octokit.rest.teams.getByName({
+      const response = await octokit.rest.orgs.checkMembershipForUser({
         org: context.repo.owner,
-        team_slug: maintainerTeamName,
+        username: payload.sender.login,
       });
 
-      console.log('maintainers fetched!');
+      const triggeredByMember = response.status === 204;
 
-      const maintainers = maintainersData.data.map((maintainer) => maintainer.login);
-
-      const triggeredByMaintainer = !maintainers.some(
-        (maintainer) => maintainer === payload.sender.login
-      );
-
-      if (triggeredByMaintainer) {
-        core.notice('Triggered by maintainer - do nothing');
+      if (triggeredByMember) {
+        core.notice('Triggered by member of the organisation - do nothing');
         // return;
       }
 
