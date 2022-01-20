@@ -43,7 +43,7 @@ async function run() {
 
       if (hasWriteAccess) {
         core.notice('Triggered by a user with write access - do nothing');
-        return;
+        // return;
       }
 
       core.notice(`Issue has some activity - removing ${closeWhenStaleLabel} label.`);
