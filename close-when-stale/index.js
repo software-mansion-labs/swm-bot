@@ -72,20 +72,14 @@ async function run() {
       state: 'open',
     });
 
-    console.log('issues: ', issues);
-
     const issuesToClose = issues.data.filter((issue) => {
       const issueDate = new Date(issue.updated_at);
 
       const difference = currentDate.getTime() - issueDate.getTime();
       const differenceInDays = difference / (1000 * 3600 * 24);
 
-      console.log({ differenceInDays, daysToClose, close: differenceInDays >= daysToClose });
-
       return differenceInDays >= daysToClose;
     });
-
-    console.log('issuesToClose: ', issues);
 
     if (!issuesToClose.length) {
       core.notice(`No issues to close`);
