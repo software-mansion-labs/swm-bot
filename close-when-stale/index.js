@@ -43,7 +43,7 @@ async function run() {
 
       if (hasWriteAccess) {
         core.notice('Triggered by a user with write access - do nothing');
-        // return;
+        return;
       }
 
       core.notice(`Issue has some activity - removing ${closeWhenStaleLabel} label.`);
@@ -62,6 +62,7 @@ async function run() {
       return;
     }
 
+    // Close inactive issues with `closeWhenStaleLabel` label
     const currentDate = new Date();
 
     const issues = await octokit.rest.issues.listForRepo({
@@ -71,26 +72,51 @@ async function run() {
       state: 'open',
     });
 
-    issues.data.forEach(async (issue) => {
+    const issuesToClose = issues.data.filter((issue) => {
       const issueDate = new Date(issue.updated_at);
 
       const difference = currentDate.getTime() - issueDate.getTime();
       const differenceInDays = difference / (1000 * 3600 * 24);
 
-      if (differenceInDays >= daysToClose) {
-        // Could be done in bulk with Promise.all rather than in a loop tbh
-        const { status } = await octokit.rest.issues.update({
-          owner: context.repo.owner,
-          repo: context.repo.repo,
-          issue_number: issue.number,
-          state: 'closed',
-        });
-
-        if (status === 200) {
-          core.notice(`Closed issue ${issue.number}`);
-        }
-      }
+      return differenceInDays >= daysToClose;
     });
+
+    if (!issuesToClose.length) {
+      core.notice(`No issues to close`);
+      return;
+    }
+
+    const issueNumbersToClose = issuesToClose.map((issue) => issue.number);
+
+    const issuesToClosePromises = issueNumbersToClose.map((issueNumber) =>
+      octokit.rest.issues.update({
+        owner: context.repo.owner,
+        repo: context.repo.repo,
+        issue_number: issueNumber,
+        state: 'closed',
+      })
+    );
+
+    const values = await Promise.allSettled(issuesToClosePromises);
+
+    // Print closed and failed to close issue numbers
+    const issuesToPrint = values.map(({ status }, i) => ({
+      status,
+      issue: issueNumbersToClose[i],
+    }));
+
+    const closedIssuesWithStatus = issuesToPrint.filter((issue) => issue.status === 'fulfilled');
+    const failedToCloseIssuesWithStatus = issuesToPrint.filter(
+      (issue) => issue.status !== 'fulfilled'
+    );
+
+    const closedIssues = closedIssuesWithStatus.map((issue) => issue.issue);
+    const failedToCloseIssues = failedToCloseIssuesWithStatus.map((issue) => issue.issue);
+
+    core.notice(`Closed issues: ${closedIssues.join(', ')}`);
+    if (!failedToCloseIssues.length) {
+      core.notice(`Issues that failed to close: ${failedToCloseIssues.join(', ')}`);
+    }
   } catch (e) {
     core.error(e);
     core.setFailed(e.message);
