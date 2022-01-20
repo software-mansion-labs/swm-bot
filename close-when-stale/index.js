@@ -27,7 +27,10 @@ async function run() {
 
     // Remove label when activity detected
     if (context.eventName === 'issues' || context.eventName === 'issue_comment') {
-      console.log(payload.sender.type);
+      if (payload.sender.type === 'Bot') {
+        core.notice('Triggered by a bot - do nothing');
+        return;
+      }
 
       const response = await octokit.rest.repos.getCollaboratorPermissionLevel({
         owner: context.repo.owner,
