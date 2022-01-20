@@ -27,16 +27,18 @@ async function run() {
 
     // Remove label when activity detected
     if (context.eventName === 'issues' || context.eventName === 'issue_comment') {
-      const response = await octokit.rest.orgs.checkMembershipForUser({
-        org: context.repo.owner,
+      const response = await octokit.rest.repos.getCollaboratorPermissionLevel({
+        owner: context.repo.owner,
+        repo: context.repo.repo,
         username: payload.sender.login,
       });
 
-      const triggeredByMember = response.status === 204;
+      const permission = response.data.permission;
+      const hasWriteAccess = permission === 'write' || permission === 'admin';
 
-      if (triggeredByMember) {
-        core.notice('Triggered by member of the organisation - do nothing');
-        // return;
+      if (hasWriteAccess) {
+        core.notice('Triggered by a user with write access - do nothing');
+        return;
       }
 
       core.notice(`Issue has some activity - removing ${closeWhenStaleLabel} label.`);
