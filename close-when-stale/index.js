@@ -27,6 +27,8 @@ async function run() {
 
     // Remove label when activity detected
     if (context.eventName === 'issues' || context.eventName === 'issue_comment') {
+      console.log(payload.sender.type);
+
       const response = await octokit.rest.repos.getCollaboratorPermissionLevel({
         owner: context.repo.owner,
         repo: context.repo.repo,
