@@ -1,6 +1,10 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
+const zip = require('../common/zip');
+
+const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
+
 async function run() {
   try {
     const githubToken = core.getInput('github-token');
@@ -76,7 +80,7 @@ async function run() {
       const issueDate = new Date(issue.updated_at);
 
       const difference = currentDate.getTime() - issueDate.getTime();
-      const differenceInDays = difference / (1000 * 3600 * 24);
+      const differenceInDays = difference / MILLISECONDS_IN_A_DAY;
 
       return differenceInDays >= daysToClose;
     });
@@ -97,26 +101,25 @@ async function run() {
       })
     );
 
-    const values = await Promise.allSettled(issuesToClosePromises);
+    const settledPromises = await Promise.allSettled(issuesToClosePromises);
 
     // Print closed and failed to close issue numbers
-    const issuesToPrint = values.map(({ status }, i) => ({
-      status,
-      issue: issueNumbersToClose[i],
-    }));
+    const issuesToPrint = zip(issueNumbersToClose, settledPromises);
 
-    const closedIssuesWithStatus = issuesToPrint.filter((issue) => issue.status === 'fulfilled');
-    const failedToCloseIssuesWithStatus = issuesToPrint.filter(
-      (issue) => issue.status !== 'fulfilled'
-    );
+    console.log(issuesToPrint);
 
-    const closedIssues = closedIssuesWithStatus.map((issue) => issue.issue);
-    const failedToCloseIssues = failedToCloseIssuesWithStatus.map((issue) => issue.issue);
+    // const closedIssuesWithStatus = issuesToPrint.filter((issue) => issue.status === 'fulfilled');
+    // const failedToCloseIssuesWithStatus = issuesToPrint.filter(
+    //   (issue) => issue.status !== 'fulfilled'
+    // );
 
-    core.notice(`Closed issues: ${closedIssues.join(', ')}`);
-    if (failedToCloseIssues.length) {
-      core.notice(`Issues that failed to close: ${failedToCloseIssues.join(', ')}`);
-    }
+    // const closedIssues = closedIssuesWithStatus.map((issue) => issue.issue);
+    // const failedToCloseIssues = failedToCloseIssuesWithStatus.map((issue) => issue.issue);
+
+    // core.notice(`Closed issues: ${closedIssues.join(', ')}`);
+    // if (failedToCloseIssues.length) {
+    //   core.notice(`Issues that failed to close: ${failedToCloseIssues.join(', ')}`);
+    // }
   } catch (e) {
     core.error(e);
     core.setFailed(e.message);
