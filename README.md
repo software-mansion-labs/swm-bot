@@ -13,7 +13,8 @@ This project is fondly known within Software Mansion as Bot Szczepan (eng. Steph
 ├── examples # yaml files showing how to use actions within your project
 ├── needs-more-info # action used for checking whether the issue template fields are filled
 ├── needs-repro # action used for checking whether issue has a snack, GitHub repo or a snippet of code
-└── platforms # action that assigns labels to user-selected platforms in the issue template
+├── platforms # action that assigns labels to user-selected platforms in the issue template
+└── close-when-stale # action that closes the issue with specified label after some time of inactivity
 ```
 
 Repository consists of a few GitHub Actions that are implemented in self-contained manner - each one should be independent of each other.
@@ -93,5 +94,25 @@ inputs:
   platforms-with-labels:
     description: Dictionary with platforms and corresponding labels used in the repo
     # for example: '{"Android": "🤖android", "iOS": "🍎iOS"}'
+    required: true
+```
+
+### close-when-stale
+
+```yml
+name: Close when stale
+description: Closes the issue after the specified time if it has the specified label
+inputs:
+  github-token:
+    description: A GitHub token.
+    required: false
+    default: ${{ github.token }}
+
+  close-when-stale-label:
+    description: Label which indicates which issues are considered to be closed
+    required: true
+
+  days-to-close:
+    description: How many days will have to pass without activity in order to close the issue
     required: true
 ```
