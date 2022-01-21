@@ -114,7 +114,7 @@ async function run() {
     const failedToCloseIssues = failedToCloseIssuesWithStatus.map((issue) => issue.issue);
 
     core.notice(`Closed issues: ${closedIssues.join(', ')}`);
-    if (!failedToCloseIssues.length) {
+    if (failedToCloseIssues.length) {
       core.notice(`Issues that failed to close: ${failedToCloseIssues.join(', ')}`);
     }
   } catch (e) {
