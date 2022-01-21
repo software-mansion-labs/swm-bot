@@ -1,8 +1,6 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
-const zip = require('../common/zip');
-
 const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
 
 async function run() {
@@ -104,22 +102,23 @@ async function run() {
     const settledPromises = await Promise.allSettled(issuesToClosePromises);
 
     // Print closed and failed to close issue numbers
-    const issuesToPrint = zip(issueNumbersToClose, settledPromises);
+    const issuesToPrint = settledPromises.map(({ status }, i) => ({
+      status,
+      issue: issueNumbersToClose[i],
+    }));
 
-    console.log(issuesToPrint);
+    const closedIssuesWithStatus = issuesToPrint.filter((issue) => issue.status === 'fulfilled');
+    const failedToCloseIssuesWithStatus = issuesToPrint.filter(
+      (issue) => issue.status !== 'fulfilled'
+    );
 
-    // const closedIssuesWithStatus = issuesToPrint.filter((issue) => issue.status === 'fulfilled');
-    // const failedToCloseIssuesWithStatus = issuesToPrint.filter(
-    //   (issue) => issue.status !== 'fulfilled'
-    // );
+    const closedIssues = closedIssuesWithStatus.map((issue) => issue.issue);
+    const failedToCloseIssues = failedToCloseIssuesWithStatus.map((issue) => issue.issue);
 
-    // const closedIssues = closedIssuesWithStatus.map((issue) => issue.issue);
-    // const failedToCloseIssues = failedToCloseIssuesWithStatus.map((issue) => issue.issue);
-
-    // core.notice(`Closed issues: ${closedIssues.join(', ')}`);
-    // if (failedToCloseIssues.length) {
-    //   core.notice(`Issues that failed to close: ${failedToCloseIssues.join(', ')}`);
-    // }
+    core.notice(`Closed issues: ${closedIssues.join(', ')}`);
+    if (failedToCloseIssues.length) {
+      core.notice(`Issues that failed to close: ${failedToCloseIssues.join(', ')}`);
+    }
   } catch (e) {
     core.error(e);
     core.setFailed(e.message);
