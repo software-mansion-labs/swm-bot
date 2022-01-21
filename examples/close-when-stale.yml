@@ -1,7 +1,7 @@
 name: Close when stale
 on:
-  # schedule:
-  # - cron: '*/15 * * * *' # every 15 minutes
+  schedule:
+    - cron: '37 21 * * *' # at 21:37 every day
   issues:
     types: [edited]
   issue_comment:
