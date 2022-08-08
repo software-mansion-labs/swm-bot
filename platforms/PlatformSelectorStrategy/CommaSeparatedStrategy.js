@@ -1,8 +1,15 @@
 const PlatformSelectorStrategy = require('.');
 
 class CommaSeparatedStrategy extends PlatformSelectorStrategy {
-  constructor(issueBody, platformsWithLabels, platformsSectionHeader = 'Affected platforms') {
+  constructor(issueBody, platformsWithLabels, platformsSectionHeader) {
     super(issueBody, platformsWithLabels);
+
+    if (platformsSectionHeader == null) {
+      throw new Error(
+        '`platforms-section-header` needs to be passed to action when using platforms comma-separated syntax'
+      );
+    }
+
     this.platformsSectionHeader = platformsSectionHeader;
   }
 

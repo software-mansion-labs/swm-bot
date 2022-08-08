@@ -343,7 +343,8 @@ describe('PlatformSelector', () => {
       const platformSelector = new PlatformSelector(
         issueBody,
         '{"Android": "🤖android", "iOS": "🍎iOS", "Web": "🧭web"}',
-        true
+        true,
+        'Affected platforms'
       );
 
       expect(platformSelector.selectLabelsToAdd()).toStrictEqual([]);
@@ -354,7 +355,8 @@ describe('PlatformSelector', () => {
       const platformSelector = new PlatformSelector(
         issueBody,
         '{"Android": "🤖android", "iOS": "🍎iOS", "Web": "🧭web"}',
-        true
+        true,
+        'Affected platforms'
       );
 
       expect(platformSelector.selectLabelsToAdd()).toStrictEqual([]);
@@ -365,7 +367,8 @@ describe('PlatformSelector', () => {
       const platformSelector = new PlatformSelector(
         issueBody,
         '{"Android": "🤖android", "iOS": "🍎iOS", "Web": "🧭web"}',
-        true
+        true,
+        'Affected platforms'
       );
 
       expect(platformSelector.selectLabelsToAdd()).toStrictEqual([]);
@@ -376,10 +379,24 @@ describe('PlatformSelector', () => {
       const platformSelector = new PlatformSelector(
         issueBody,
         '{"Android": "🤖android", "iOS": "🍎iOS", "Web": "🧭web"}',
-        true
+        true,
+        'Affected platforms'
       );
 
       expect(platformSelector.selectLabelsToAdd()).toStrictEqual([]);
+    });
+
+    it('should throw error when platformsSectionHeader is not provided when using comma-separated syntax', () => {
+      const issueBody = ``;
+
+      expect(() => {
+        // eslint-disable-next-line no-unused-vars
+        const _ = new PlatformSelector(
+          issueBody,
+          '{"Android": "🤖android", "iOS": "🍎iOS", "Web": "🧭web"}',
+          true
+        );
+      }).toThrow();
     });
 
     it('should return correct label when a platform is selected', () => {
@@ -538,7 +555,8 @@ describe('PlatformSelector', () => {
       const platformSelector = new PlatformSelector(
         issueBody,
         '{"Android": "🤖android", "iOS": "🍎iOS", "Web": "🧭web"}',
-        true
+        true,
+        'Affected platforms'
       );
 
       expect(platformSelector.selectLabelsToRemove()).toEqual(
@@ -551,7 +569,8 @@ describe('PlatformSelector', () => {
       const platformSelector = new PlatformSelector(
         issueBody,
         '{"Android": "🤖android", "iOS": "🍎iOS", "Web": "🧭web"}',
-        true
+        true,
+        'Affected platforms'
       );
 
       expect(platformSelector.selectLabelsToRemove()).toEqual(
