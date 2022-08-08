@@ -1,36 +1,34 @@
 const normalizeIssue = require('../common/normalizeIssue');
+const CommaSeparatedStrategy = require('./PlatformSelectorStrategy/CommaSeparatedStrategy');
+const FromCheckboxesStrategy = require('./PlatformSelectorStrategy/FromCheckboxesStrategy');
 
 class PlatformSelector {
-  constructor(issueBody, platformsWithLabelsString) {
-    this.issueBody = normalizeIssue(issueBody || '');
-    this.platformsWithLabels = JSON.parse(platformsWithLabelsString);
+  constructor(
+    issueBody,
+    platformsWithLabelsString,
+    areCommaSeparated = false,
+    platformsSectionHeader
+  ) {
+    const normalizedIssueBody = normalizeIssue(issueBody || '');
+    const platformsWithLabels = JSON.parse(platformsWithLabelsString);
+    // Look mom, design patterns were useful in the end!
+    this.strategy = areCommaSeparated
+      ? new CommaSeparatedStrategy(normalizedIssueBody, platformsWithLabels, platformsSectionHeader)
+      : new FromCheckboxesStrategy(normalizedIssueBody, platformsWithLabels);
   }
 
+  /**
+   * @returns string[]
+   */
   selectLabelsToAdd() {
-    const platformsRegexPart = this._getPlatforms().join('|');
-    // Adopted from https://github.com/react-navigation/react-navigation/blob/main/.github/workflows/check-labels.yml
-    const platformsRegex = new RegExp(`- \\[\\s?[^\\s]+\\s?\\] (${platformsRegexPart})`, 'gim');
-    const checkboxSelectedPlatforms = this.issueBody.match(platformsRegex) || [];
-    const selectedPlatforms = checkboxSelectedPlatforms.map((platformWithCheckbox) =>
-      platformWithCheckbox.replace(/- \[\s?[^\s]+\s?\]\s?/g, '')
-    );
-    return selectedPlatforms.map((platform) => this.platformsWithLabels[platform]);
+    return this.strategy.selectLabelsToAdd();
   }
 
-  // Code adopted from https://melvingeorge.me/blog/remove-elements-contained-in-another-array-javascript
+  /**
+   * @returns string[]
+   */
   selectLabelsToRemove() {
-    const allLabels = this._getPlatformLabels();
-    const labelsToAdd = this.selectLabelsToAdd();
-    const labelsToAddSet = new Set(labelsToAdd);
-    return allLabels.filter((name) => !labelsToAddSet.has(name));
-  }
-
-  _getPlatforms() {
-    return Object.keys(this.platformsWithLabels);
-  }
-
-  _getPlatformLabels() {
-    return Object.values(this.platformsWithLabels);
+    return this.strategy.selectLabelsToRemove();
   }
 }
 
