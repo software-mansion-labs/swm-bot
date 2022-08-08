@@ -6,9 +6,21 @@ inputs:
     required: false
     default: ${{ github.token }}
 
+  platforms-section-header:
+    description: Name of the section on which platforms are stated in the issue template. Required for comma separated syntax
+    required: false
+    default: Affected platforms
+
   platforms-with-labels:
     description: Dictionary with platforms and corresponding labels used in the repo
     required: true
+
+  platforms-comma-separated:
+    description: |
+      Whether a checkbox syntax is used eg. '- [ ] iOS', or a comma-separated syntax eg. 'iOS, Android, Web'.
+      Comma-separated syntax is used by dropdowns in new form-like GitHub issue templates
+    required: false
+    default: false
 
 runs:
   using: node12
