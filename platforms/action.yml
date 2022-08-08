@@ -9,6 +9,7 @@ inputs:
   platforms-section-header:
     description: Name of the section on which platforms are stated in the issue template. Required for comma separated syntax
     required: false
+    default: Affected platforms
 
   platforms-with-labels:
     description: Dictionary with platforms and corresponding labels used in the repo
