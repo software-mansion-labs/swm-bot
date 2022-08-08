@@ -24,6 +24,11 @@ inputs:
     description: Creation date of the issues from which bot starts to reply when comment is added/edited/deleted. Date with format - YYYY-MM-DD
     required: false
 
+  consider-code-snippets:
+    description: Whether to consider code-snippets as valid reproduction examples
+    required: false
+    default: false
+
 runs:
   using: node16
   main: index.js

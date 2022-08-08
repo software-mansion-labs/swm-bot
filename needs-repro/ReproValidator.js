@@ -1,9 +1,10 @@
 const normalizeIssue = require('../common/normalizeIssue');
 
 class ReproValidator {
-  constructor(author, commenter) {
+  constructor(author, commenter, considerCodeSnippets = false) {
     this.author = author;
     this.commenter = commenter;
+    this.considerCodeSnippets = considerCodeSnippets;
   }
 
   // Code adopted from https://github.com/react-navigation/react-navigation/blob/main/.github/workflows/check-repro.yml#L22
@@ -25,6 +26,10 @@ class ReproValidator {
 
   // Heuristic way to guess with some confidence that a snippet has some JS/TS code
   _hasCodeSnippet(body) {
+    if (!this.considerCodeSnippets) {
+      return false;
+    }
+
     const normalizedBody = normalizeIssue(body || '');
 
     // Start with 0 certainty that is is a JS/TS repro

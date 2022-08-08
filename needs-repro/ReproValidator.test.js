@@ -700,7 +700,7 @@ describe('ReproValidator', () => {
       
       export default App;
     `;
-      const reproValidator = new ReproValidator('kacperkapusciak');
+      const reproValidator = new ReproValidator('kacperkapusciak', null, true);
 
       expect(reproValidator._hasCodeSnippet(issueBody)).toBe(true);
     });
@@ -769,7 +769,7 @@ describe('ReproValidator', () => {
         );
       };
     `;
-      const reproValidator = new ReproValidator('kacperkapusciak');
+      const reproValidator = new ReproValidator('kacperkapusciak', null, true);
 
       expect(reproValidator._hasCodeSnippet(issueBody)).toBe(true);
     });
@@ -787,7 +787,7 @@ describe('ReproValidator', () => {
         return (<ReText text={text} />)
       }
       `;
-      const reproValidator = new ReproValidator('kacperkapusciak');
+      const reproValidator = new ReproValidator('kacperkapusciak', null, true);
 
       expect(reproValidator._hasCodeSnippet(issueBody)).toBe(true);
     });
@@ -809,7 +809,7 @@ describe('ReproValidator', () => {
       </Swipeable>
       \`\`\`
       `;
-      const reproValidator = new ReproValidator('kacperkapusciak');
+      const reproValidator = new ReproValidator('kacperkapusciak', null, true);
 
       expect(reproValidator._hasCodeSnippet(issueBody)).toBe(true);
     });
@@ -823,28 +823,28 @@ describe('ReproValidator', () => {
       proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
       \`\`\`
       `;
-      const reproValidator = new ReproValidator('kacperkapusciak');
+      const reproValidator = new ReproValidator('kacperkapusciak', null, true);
 
       expect(reproValidator._hasCodeSnippet(issueBody)).toBe(false);
     });
 
     it('should return false when snippet is empty', () => {
       const issueBody = ``;
-      const reproValidator = new ReproValidator('kacperkapusciak');
+      const reproValidator = new ReproValidator('kacperkapusciak', null, true);
 
       expect(reproValidator._hasCodeSnippet(issueBody)).toBe(false);
     });
 
     it('should return false when snippet is null', () => {
       const issueBody = null;
-      const reproValidator = new ReproValidator('kacperkapusciak');
+      const reproValidator = new ReproValidator('kacperkapusciak', null, true);
 
       expect(reproValidator._hasCodeSnippet(issueBody)).toBe(false);
     });
 
     it('should return false when snippet is undefined', () => {
       const issueBody = undefined;
-      const reproValidator = new ReproValidator('kacperkapusciak');
+      const reproValidator = new ReproValidator('kacperkapusciak', null, true);
 
       expect(reproValidator._hasCodeSnippet(issueBody)).toBe(false);
     });
@@ -873,7 +873,7 @@ describe('ReproValidator', () => {
       
       <img width="444" alt="スクリーンショット 2022-01-11 16 11 06" src="https://user-images.githubusercontent.com/15521227/148897093-97e9cf59-9a9c-435b-a013-b69936cbb60d.png">
       `;
-      const reproValidator = new ReproValidator('kacperkapusciak');
+      const reproValidator = new ReproValidator('kacperkapusciak', null, true);
 
       expect(reproValidator._hasCodeSnippet(issueBody)).toBe(false);
     });
@@ -883,7 +883,7 @@ describe('ReproValidator', () => {
       import React from "react";
       export default App;
     `;
-      const reproValidator = new ReproValidator('kacperkapusciak');
+      const reproValidator = new ReproValidator('kacperkapusciak', null, true);
 
       expect(reproValidator._hasCodeSnippet(issueBody)).toBe(false);
     });
@@ -969,7 +969,7 @@ describe('ReproValidator', () => {
       expect(reproValidator.isReproValid(issueBody)).toBe(true);
     });
 
-    it('should return true for real reproduction from react-native-screens', () => {
+    it('should return false when repro is a code snippet', () => {
       const issueBody = `
       ## Reproduction
 
@@ -1004,7 +1004,7 @@ describe('ReproValidator', () => {
     `;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator.isReproValid(issueBody)).toBe(true);
+      expect(reproValidator.isReproValid(issueBody)).toBe(false);
     });
 
     it('should return false for real issue without reproduction from react-native-gesture-handler', () => {
@@ -1040,7 +1040,7 @@ describe('ReproValidator', () => {
       expect(reproValidator.isReproValid(issueBody)).toBe(false);
     });
 
-    it('should return true for real comment with repro from react-native-gesture-handler', () => {
+    it('should return false for repro with code snippet from react-native-gesture-handler', () => {
       const issueBody = `
       Here is the snippet for the gesture handler,
 
@@ -1086,7 +1086,7 @@ describe('ReproValidator', () => {
       `;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator.isReproValid(issueBody)).toBe(true);
+      expect(reproValidator.isReproValid(issueBody)).toBe(false);
     });
 
     it('should return true when real life example repo comment is provided', () => {
@@ -1171,7 +1171,7 @@ describe('ReproValidator', () => {
       expect(reproValidator.isReproValid(issueBody)).toBe(false);
     });
 
-    it('should return true when real life example reproduction is provided', () => {
+    it('should return false when a short snippet is provided', () => {
       const issueBody = `
       ## Snack or minimal code example
 
@@ -1185,7 +1185,7 @@ describe('ReproValidator', () => {
       `;
       const reproValidator = new ReproValidator('kacperkapusciak');
 
-      expect(reproValidator.isReproValid(issueBody)).toBe(true);
+      expect(reproValidator.isReproValid(issueBody)).toBe(false);
     });
   });
 });

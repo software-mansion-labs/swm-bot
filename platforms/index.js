@@ -6,7 +6,7 @@ async function run() {
   try {
     const githubToken = core.getInput('github-token');
     const platformsWithLabels = core.getInput('platforms-with-labels');
-    const areCommaSeparated = core.getInput('platforms-comma-separated') === 'true';
+    const areCommaSeparated = core.getBooleanInput('platforms-comma-separated');
     const platformsSectionHeader = core.getInput('platforms-section-header');
 
     const octokit = github.getOctokit(githubToken);

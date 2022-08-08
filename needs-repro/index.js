@@ -10,6 +10,7 @@ async function run() {
     const reproProvidedLabel = core.getInput('repro-provided-label');
     const needsReproResponse = core.getInput('needs-repro-response');
     const checkIssuesCreatedAfter = core.getInput('check-issues-only-created-after');
+    const considerCodeSnippets = core.getBooleanInput('consider-code-snippets');
 
     const octokit = github.getOctokit(githubToken);
 
@@ -58,7 +59,7 @@ async function run() {
     // Code adopted from https://stackoverflow.com/a/9229821/9999202
     const issueAndCommentsUniq = [...new Set(issueAndComments)];
 
-    const reproValidator = new ReproValidator(author, commenter);
+    const reproValidator = new ReproValidator(author, commenter, considerCodeSnippets);
     const hasValidRepro = issueAndCommentsUniq.some((body) => {
       // ONCE TOLD ME
       return reproValidator.isReproValid(body);
