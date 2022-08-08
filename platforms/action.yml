@@ -17,7 +17,7 @@ inputs:
 
   platforms-comma-separated:
     description: |
-      Whether a checkbox syntax is used eg. '- [ ] iOS', or a comma-separated syntax eg. 'iOS, Android, Web'.
+      Whether a checkbox syntax is used eg. '- [ ] iOS' or a comma-separated syntax eg. 'iOS, Android, Web'.
       Comma-separated syntax is used by dropdowns in new form-like GitHub issue templates
     required: false
     default: false
