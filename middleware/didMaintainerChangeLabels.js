@@ -1,4 +1,4 @@
-function didMaintainerChangeLabels(ctx, next) {
+async function didMaintainerChangeLabels(ctx, next) {
   // noop
   next();
 }
