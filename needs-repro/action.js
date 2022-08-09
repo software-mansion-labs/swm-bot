@@ -4,7 +4,9 @@ const github = require('@actions/github');
 const ReproValidator = require('./ReproValidator');
 const isDateBefore = require('../common/isDateBefore');
 
-async function action() {
+const withErrorHandling = require('../common/withErrorHandling');
+
+async function action({ issueData }) {
   const githubToken = core.getInput('github-token');
   const needsReproLabel = core.getInput('needs-repro-label');
   const reproProvidedLabel = core.getInput('repro-provided-label');
@@ -15,13 +17,6 @@ async function action() {
   const octokit = github.getOctokit(githubToken);
 
   const { context } = github;
-
-  const issueData = {
-    owner: context.repo.owner,
-    repo: context.repo.repo,
-    issue_number: context.issue.number,
-  };
-
   const { payload } = context;
 
   // Don't check for repro on pull requests
@@ -115,4 +110,4 @@ async function action() {
   }
 }
 
-module.exports = action;
+module.exports = withErrorHandling(action);

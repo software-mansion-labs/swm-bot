@@ -4,7 +4,9 @@ const github = require('@actions/github');
 const IssueTemplateValidator = require('./IssueTemplateValidator');
 const MissingSectionsFormatter = require('./MissingSectionsFormatter');
 
-async function action() {
+const withErrorHandling = require('../common/withErrorHandling');
+
+async function action({ issueData }) {
   const githubToken = core.getInput('github-token');
   const needsMoreInfoLabel = core.getInput('needs-more-info-label');
   const requiredSectionsString = core.getInput('required-sections');
@@ -13,12 +15,6 @@ async function action() {
   const octokit = github.getOctokit(githubToken);
 
   const { context } = github;
-
-  const issueData = {
-    owner: context.repo.owner,
-    repo: context.repo.repo,
-    issue_number: context.issue.number,
-  };
 
   const { payload } = context;
   const { body } = payload.issue;
@@ -77,4 +73,4 @@ async function action() {
   }
 }
 
-module.exports = action;
+module.exports = withErrorHandling(action);

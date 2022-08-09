@@ -9,7 +9,7 @@ class Pipeline {
     return this;
   }
 
-  async run() {
+  async run(context) {
     let prevIndex = -1;
 
     const runner = async (index) => {
@@ -22,7 +22,7 @@ class Pipeline {
       const middleware = this.stack[index];
 
       if (middleware) {
-        await middleware(() => {
+        await middleware(context, () => {
           return runner(index + 1);
         });
       }

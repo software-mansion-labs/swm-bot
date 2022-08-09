@@ -1,9 +1,11 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
+const withErrorHandling = require('../common/withErrorHandling');
+
 const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
 
-async function action() {
+async function action({ issueData }) {
   const githubToken = core.getInput('github-token');
   const closeWhenStaleLabel = core.getInput('close-when-stale-label');
   const daysToClose = core.getInput('days-to-close');
@@ -11,13 +13,6 @@ async function action() {
   const octokit = github.getOctokit(githubToken);
 
   const { context } = github;
-
-  const issueData = {
-    owner: context.repo.owner,
-    repo: context.repo.repo,
-    issue_number: context.issue.number,
-  };
-
   const { payload } = context;
 
   // Don't run on pull requests
@@ -120,4 +115,4 @@ async function action() {
   }
 }
 
-module.exports = action;
+module.exports = withErrorHandling(action);

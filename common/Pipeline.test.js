@@ -6,11 +6,11 @@ describe('Pipeline', () => {
     const second = jest.fn();
 
     new Pipeline()
-      .use((next) => {
+      .use((_, next) => {
         first();
         next();
       })
-      .use((next) => {
+      .use((_, next) => {
         second();
         next();
       })
@@ -26,7 +26,7 @@ describe('Pipeline', () => {
     const test = false;
 
     new Pipeline()
-      .use((next) => {
+      .use((_, next) => {
         if (test) {
           next();
         }
@@ -37,5 +37,23 @@ describe('Pipeline', () => {
       .run();
 
     expect(first).toHaveBeenCalledTimes(0);
+  });
+
+  it('should use context to pass data down the pipeline', () => {
+    const first = jest.fn();
+    const value = 0;
+
+    new Pipeline()
+      .use((context, next) => {
+        context.value += 1;
+        next();
+      })
+      .use((context, next) => {
+        context.value += 1;
+        first(context.value);
+        next();
+      })
+      .run({ value });
+    expect(first).toHaveBeenCalledWith(2);
   });
 });

@@ -3,7 +3,9 @@ const github = require('@actions/github');
 
 const PlatformSelector = require('./PlatformSelector');
 
-async function action() {
+const withErrorHandling = require('../common/withErrorHandling');
+
+async function action({ issueData }) {
   const githubToken = core.getInput('github-token');
   const platformsWithLabels = core.getInput('platforms-with-labels');
   const areCommaSeparated = core.getBooleanInput('platforms-comma-separated');
@@ -12,12 +14,6 @@ async function action() {
   const octokit = github.getOctokit(githubToken);
 
   const { context } = github;
-
-  const issueData = {
-    owner: context.repo.owner,
-    repo: context.repo.repo,
-    issue_number: context.issue.number,
-  };
 
   const { payload } = context;
   const { body } = payload.issue;
@@ -56,4 +52,4 @@ async function action() {
   }
 }
 
-module.exports = action;
+module.exports = withErrorHandling(action);
