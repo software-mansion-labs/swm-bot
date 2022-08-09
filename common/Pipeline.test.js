@@ -1,3 +1,4 @@
+const core = require('@actions/core');
 const Pipeline = require('./Pipeline');
 
 describe('Pipeline', () => {
@@ -41,7 +42,6 @@ describe('Pipeline', () => {
 
   it('should use context to pass data down the pipeline', () => {
     const first = jest.fn();
-    const value = 0;
 
     new Pipeline()
       .use((context, next) => {
@@ -53,7 +53,31 @@ describe('Pipeline', () => {
         first(context.value);
         next();
       })
-      .run({ value });
+      .use(({ value }) => {
+        expect(value).toBe(2);
+      })
+      .run({ value: 0 });
+
     expect(first).toHaveBeenCalledWith(2);
+  });
+
+  it('should handle error and show it to the GH Actions console', async () => {
+    core.error = jest.fn();
+    core.setFailed = jest.fn();
+
+    const errorMessage = 'Test error';
+    const error = new Error(errorMessage);
+
+    expect(
+      new Pipeline()
+        .use(() => {
+          throw error;
+        })
+        .run()
+    );
+
+    expect(core.error).toHaveBeenCalledTimes(1);
+    expect(core.error).toHaveBeenCalledWith(error);
+    expect(core.setFailed).toHaveBeenCalledWith(errorMessage);
   });
 });

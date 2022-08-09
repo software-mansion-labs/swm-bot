@@ -4,8 +4,6 @@ const github = require('@actions/github');
 const ReproValidator = require('./ReproValidator');
 const isDateBefore = require('../common/isDateBefore');
 
-const withErrorHandling = require('../common/withErrorHandling');
-
 async function action({ issueData }) {
   const githubToken = core.getInput('github-token');
   const needsReproLabel = core.getInput('needs-repro-label');
@@ -110,4 +108,4 @@ async function action({ issueData }) {
   }
 }
 
-module.exports = withErrorHandling(action);
+module.exports = action;

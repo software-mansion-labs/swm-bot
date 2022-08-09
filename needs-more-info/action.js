@@ -4,8 +4,6 @@ const github = require('@actions/github');
 const IssueTemplateValidator = require('./IssueTemplateValidator');
 const MissingSectionsFormatter = require('./MissingSectionsFormatter');
 
-const withErrorHandling = require('../common/withErrorHandling');
-
 async function action({ issueData }) {
   const githubToken = core.getInput('github-token');
   const needsMoreInfoLabel = core.getInput('needs-more-info-label');
@@ -73,4 +71,4 @@ async function action({ issueData }) {
   }
 }
 
-module.exports = withErrorHandling(action);
+module.exports = action;

@@ -1,3 +1,5 @@
+const core = require('@actions/core');
+
 // Code adopted from https://muniftanjim.dev/blog/basic-middleware-pattern-in-javascript/
 class Pipeline {
   constructor(...middlewares) {
@@ -16,15 +18,17 @@ class Pipeline {
       if (index === prevIndex) {
         throw new Error('next() called multiple times');
       }
-
       prevIndex = index;
 
       const middleware = this.stack[index];
 
       if (middleware) {
-        await middleware(context, () => {
-          return runner(index + 1);
-        });
+        try {
+          await middleware(context, () => runner(index + 1));
+        } catch (e) {
+          core.error(e);
+          core.setFailed(e.message);
+        }
       }
     };
 

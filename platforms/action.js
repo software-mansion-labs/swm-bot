@@ -3,8 +3,6 @@ const github = require('@actions/github');
 
 const PlatformSelector = require('./PlatformSelector');
 
-const withErrorHandling = require('../common/withErrorHandling');
-
 async function action({ issueData }) {
   const githubToken = core.getInput('github-token');
   const platformsWithLabels = core.getInput('platforms-with-labels');
@@ -52,4 +50,4 @@ async function action({ issueData }) {
   }
 }
 
-module.exports = withErrorHandling(action);
+module.exports = action;
