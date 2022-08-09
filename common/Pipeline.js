@@ -9,7 +9,7 @@ class Pipeline {
     return this;
   }
 
-  async run(context) {
+  async run(context = {}) {
     let prevIndex = -1;
 
     const runner = async (index) => {

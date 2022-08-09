@@ -1,6 +1,6 @@
 const github = require('@actions/github');
 
-function getIssueData(ctx = {}, next) {
+function getIssueData(ctx, next) {
   const { context } = github;
 
   const issueData = {
