@@ -1,8 +1,6 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
-const withErrorHandling = require('../common/withErrorHandling');
-
 const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
 
 async function action({ issueData }) {
@@ -115,4 +113,4 @@ async function action({ issueData }) {
   }
 }
 
-module.exports = withErrorHandling(action);
+module.exports = action;
