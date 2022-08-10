@@ -3,12 +3,9 @@ const github = require('@actions/github');
 
 const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
 
-async function action({ issueData }) {
-  const githubToken = core.getInput('github-token');
+async function action({ octokit, issueData }) {
   const closeWhenStaleLabel = core.getInput('close-when-stale-label');
   const daysToClose = core.getInput('days-to-close');
-
-  const octokit = github.getOctokit(githubToken);
 
   const { context } = github;
   const { payload } = context;

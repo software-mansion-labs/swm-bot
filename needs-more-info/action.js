@@ -4,13 +4,10 @@ const github = require('@actions/github');
 const IssueTemplateValidator = require('./IssueTemplateValidator');
 const MissingSectionsFormatter = require('./MissingSectionsFormatter');
 
-async function action({ issueData }) {
-  const githubToken = core.getInput('github-token');
+async function action({ octokit, issueData }) {
   const needsMoreInfoLabel = core.getInput('needs-more-info-label');
   const requiredSectionsString = core.getInput('required-sections');
   const needsMoreInfoResponse = core.getInput('needs-more-info-response');
-
-  const octokit = github.getOctokit(githubToken);
 
   const { context } = github;
 

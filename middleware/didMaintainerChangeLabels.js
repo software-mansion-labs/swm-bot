@@ -1,9 +1,7 @@
-const { graphql } = require('@octokit/graphql');
-
-async function didMaintainerChangeLabels({ issueData }, next) {
+async function didMaintainerChangeLabels({ octokit, issueData }, next) {
   const { owner, repo, issue_number: isseuNumber } = issueData;
 
-  const { data } = await graphql({
+  const { data } = await octokit.graphql({
     query: `query data($owner: String!, $repo: String!, $isseuNumber: Int!) {
       repository(owner: $owner, name: $repo) {
         issue(number: $isseuNumber) {

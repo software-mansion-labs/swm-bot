@@ -4,15 +4,12 @@ const github = require('@actions/github');
 const ReproValidator = require('./ReproValidator');
 const isDateBefore = require('../common/isDateBefore');
 
-async function action({ issueData }) {
-  const githubToken = core.getInput('github-token');
+async function action({ octokit, issueData }) {
   const needsReproLabel = core.getInput('needs-repro-label');
   const reproProvidedLabel = core.getInput('repro-provided-label');
   const needsReproResponse = core.getInput('needs-repro-response');
   const checkIssuesCreatedAfter = core.getInput('check-issues-only-created-after');
   const considerCodeSnippets = core.getBooleanInput('consider-code-snippets');
-
-  const octokit = github.getOctokit(githubToken);
 
   const { context } = github;
   const { payload } = context;

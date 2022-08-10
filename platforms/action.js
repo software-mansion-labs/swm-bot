@@ -3,13 +3,10 @@ const github = require('@actions/github');
 
 const PlatformSelector = require('./PlatformSelector');
 
-async function action({ issueData }) {
-  const githubToken = core.getInput('github-token');
+async function action({ octokit, issueData }) {
   const platformsWithLabels = core.getInput('platforms-with-labels');
   const areCommaSeparated = core.getBooleanInput('platforms-comma-separated');
   const platformsSectionHeader = core.getInput('platforms-section-header');
-
-  const octokit = github.getOctokit(githubToken);
 
   const { context } = github;
 
