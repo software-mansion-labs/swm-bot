@@ -47,7 +47,7 @@ async function didMaintainerChangeLabels({ octokit, issueData }, next) {
 
   console.log(author);
 
-  const filteredTimelineItems = timelineItems.filter(({ node }) => Object.keys(node).length === 0);
+  const filteredTimelineItems = timelineItems.filter(({ node }) => Object.keys(node).length !== 0);
 
   console.log(filteredTimelineItems);
 
