@@ -1,4 +1,4 @@
-import { graphql } from '@octokit/graphql';
+const { graphql } = require('@octokit/graphql');
 
 async function didMaintainerChangeLabels({ issueData }, next) {
   const { owner, repo, issue_number: isseuNumber } = issueData;
@@ -44,4 +44,4 @@ async function didMaintainerChangeLabels({ issueData }, next) {
   next();
 }
 
-export default didMaintainerChangeLabels;
+module.exports = didMaintainerChangeLabels;
