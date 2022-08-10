@@ -42,7 +42,7 @@ async function didMaintainerChangeLabels({ octokit, issueData }, next) {
   console.log(timelineItems);
 
   // First label is always added by the issue author
-  const firstTimelineItem = timelineItems[0].node;
+  const firstTimelineItem = timelineItems[0];
   const author = firstTimelineItem.node.actor.login;
 
   console.log(author);
