@@ -43,36 +43,32 @@ async function didMaintainerChangeLabels({ octokit, issueData }, next) {
 
   const timelineItems = repository.issue.timelineItems.edges;
 
+  // No timeline items, so no labels changed. Carry on with action execution
   if (timelineItems.length === 0) {
     return next();
   }
 
+  // Filter empty nodes
+  const filteredTimelineItems = timelineItems.filter(({ node }) => Object.keys(node).length !== 0);
+
   const issue = await octokit.rest.issues.get(issueData);
   const { login: author } = issue.data.user;
 
-  console.log(author);
-
-  const filteredTimelineItems = timelineItems.filter(({ node }) => Object.keys(node).length !== 0);
-
-  console.log(filteredTimelineItems);
-
+  // Filter events invoked by the issue author
   const timelineItemsWithoutAuthor = filteredTimelineItems.filter(
     ({ node }) => node.actor.login !== author
   );
 
-  console.log(timelineItemsWithoutAuthor);
-
-  // we've filtered out all issue author and bot labeled & unlabeled events
-  // so only maintainer events are left. With maintainer we mean all events
-  // that are neither bot nor issue author events
+  // Filter events invoked by the bot
   const maintainerTimelineItems = timelineItemsWithoutAuthor.filter(({ node }) => {
     const { id } = node.actor;
     // in this case if actor has id, it's a bot
     return id == null;
   });
 
-  console.log(maintainerTimelineItems);
-
+  // We've filtered out all issue author and bot labeled & unlabeled events
+  // so only maintainer events are left. With maintainer we mean all events
+  // that are neither bot nor issue author events
   if (maintainerTimelineItems.length !== 0) {
     core.notice('Maintainer changed labels on issue. Skipping...');
     return;
