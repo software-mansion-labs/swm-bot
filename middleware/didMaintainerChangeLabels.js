@@ -1,3 +1,5 @@
+const core = require('@actions/core');
+
 /**
  * This middleware stops action execution (stops bot messing around with issue) when
  * maintainer changed the labels on the issue.
@@ -52,15 +54,16 @@ async function didMaintainerChangeLabels({ octokit, issueData }, next) {
   );
 
   // we've filtered out all issue author and bot labeled & unlabeled events
-  // so only maintainer events are left
+  // so only maintainer events are left. With maintainer we mean all events
+  // that are neither bot nor issue author events
   const maintainerTimelineItems = timelineItemsWithoutAuthor.filter(({ node }) => {
     const { id } = node.actor;
-    // if actor has id, it's a bot
+    // in this case if actor has id, it's a bot
     return id == null;
   });
 
-  // when maintainer changed labels, stop further action execution
   if (maintainerTimelineItems.length !== 0) {
+    core.notice('Maintainer changed labels on issue. Skipping...');
     return;
   }
 
