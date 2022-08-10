@@ -41,11 +41,17 @@ async function didMaintainerChangeLabels({ octokit, issueData }, next) {
   const firstTimelineItem = timelineItems[0].node;
   const author = firstTimelineItem.node.actor.login;
 
-  const filteredTimelineItems = timelineItems.filter(({ node }) => node);
+  console.log(author);
+
+  const filteredTimelineItems = timelineItems.filter(({ node }) => Object.keys(node).length === 0);
+
+  console.log(filteredTimelineItems);
 
   const timelineItemsWithoutAuthor = filteredTimelineItems.filter(
     ({ node }) => node.actor.login !== author
   );
+
+  console.log(timelineItemsWithoutAuthor);
 
   const timelineItemsWithoutBotAndAuthor = timelineItemsWithoutAuthor.filter(({ node }) => {
     const { id } = node.actor;
@@ -53,6 +59,8 @@ async function didMaintainerChangeLabels({ octokit, issueData }, next) {
     return id == null;
   });
 
+  // we've filtered out all issue author and bot labeled & unlabeled events
+  // so only maintainer events are left
   console.log(timelineItemsWithoutBotAndAuthor);
 
   next();
