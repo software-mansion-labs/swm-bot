@@ -6,6 +6,7 @@ async function getOctokit(ctx, next) {
   const octokit = github.getOctokit(githubToken);
 
   ctx.octokit = octokit;
+  ctx.githubContext = github.context;
 
   next();
 }

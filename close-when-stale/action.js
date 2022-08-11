@@ -10,12 +10,6 @@ async function action({ octokit, issueData }) {
   const { context } = github;
   const { payload } = context;
 
-  // Don't run on pull requests
-  if (payload.issue?.pull_request) {
-    core.notice('Action triggered by a comment added on a pull request.');
-    return;
-  }
-
   // Remove label when activity detected
   if (context.eventName === 'issues' || context.eventName === 'issue_comment') {
     if (payload.sender.type === 'Bot') {

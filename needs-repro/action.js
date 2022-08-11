@@ -14,12 +14,6 @@ async function action({ octokit, issueData }) {
   const { context } = github;
   const { payload } = context;
 
-  // Don't check for repro on pull requests
-  if (payload.issue.pull_request) {
-    core.notice('Action triggered by a comment added on a pull request.');
-    return;
-  }
-
   const issue = await octokit.rest.issues.get(issueData);
   const { body: issueBody, created_at: issueCreatedAt, user } = issue.data;
 

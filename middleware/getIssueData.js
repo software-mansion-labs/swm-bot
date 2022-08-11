@@ -1,12 +1,10 @@
-const github = require('@actions/github');
-
 async function getIssueData(ctx, next) {
-  const { context } = github;
+  const { githubContext } = ctx;
 
   const issueData = {
-    owner: context.repo.owner,
-    repo: context.repo.repo,
-    issue_number: context.issue.number,
+    owner: githubContext.repo.owner,
+    repo: githubContext.repo.repo,
+    issue_number: githubContext.issue.number,
   };
 
   ctx.issueData = issueData;
