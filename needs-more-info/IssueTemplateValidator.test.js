@@ -89,17 +89,17 @@ describe('IssueTemplateValidator', () => {
       expect(issueTemplateValidator._isSectionEmpty('Reproduction')).toBe(true);
     });
 
-    it('should return true when section has less than 4 characters', () => {
+    it('should return true when section has less than 3 characters', () => {
       const issueBody = `
       ## Reproduction
-      asd
+      as
       `;
       const issueTemplateValidator = new IssueTemplateValidator(issueBody, ['Reproduction']);
 
       expect(issueTemplateValidator._isSectionEmpty('Reproduction')).toBe(true);
     });
 
-    it('should return true when section has more than 4 characters', () => {
+    it('should return true when section has more than 3 characters', () => {
       const issueBody = `
       ## Reproduction
       No repro yet.
@@ -107,6 +107,16 @@ describe('IssueTemplateValidator', () => {
       const issueTemplateValidator = new IssueTemplateValidator(issueBody, ['Reproduction']);
 
       expect(issueTemplateValidator._isSectionEmpty('Reproduction')).toBe(false);
+    });
+
+    it('should return true when section has exactly 3 characters', () => {
+      const issueBody = `
+      ## Platforms
+      Web
+      `;
+      const issueTemplateValidator = new IssueTemplateValidator(issueBody, ['Platforms']);
+
+      expect(issueTemplateValidator._isSectionEmpty('Platforms')).toBe(false);
     });
 
     it('should return true when issue body is empty', () => {

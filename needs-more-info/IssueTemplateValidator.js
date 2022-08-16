@@ -1,5 +1,7 @@
 const normalizeIssue = require('../common/normalizeIssue');
 
+const MIN_SECTION_LENGTH = 3;
+
 class IssueTemplateValidator {
   constructor(issueBody, requiredSections) {
     this.issueBody = normalizeIssue(issueBody || '');
@@ -23,8 +25,8 @@ class IssueTemplateValidator {
     const nextSectionPos = sub.search(/\n[#]+/);
     const end = nextSectionPos === -1 ? undefined : nextSectionPos;
     const sectionContent = sub.substring(sectionStartIndex, end);
-    // When section has less than 3 characters it is treated as empty
-    return sectionContent.replace(/\r?\n|\r/g, '').replace(/ /g, '').length <= 3;
+    // When section has less than 2 characters it is treated as empty
+    return sectionContent.replace(/\r?\n|\r/g, '').replace(/ /g, '').length < MIN_SECTION_LENGTH;
   }
 
   validate() {
