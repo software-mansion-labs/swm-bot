@@ -1,9 +1,12 @@
-// const core = require('@actions/core');
+const core = require('@actions/core');
 
 async function didTriggerOnClosedIssue({ githubContext }, next) {
   const { payload } = githubContext;
 
-  console.log(payload?.issue);
+  if (payload?.issue?.state === 'closed') {
+    core.notice('Action triggered on a closed issue. Skipping...');
+    return;
+  }
 
   next();
 }
